@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add advanced AI/ML endpoints: SHAP model explainability (POST /api/explain), batch prediction (POST /api/predict/batch), and what-if analysis (POST /api/what-if). These demonstrate AI innovation and scalability to hackathon judges.",
+  "status": "completed",
+  "steps": [
+    "Add shap to ai_backend/requirements.txt",
+    "Add new Pydantic schemas to ai_backend/app/schemas/prediction.py: ExplainRequest (same fields as PredictionRequest), ExplainResponse (shap_values list with feature name/value/contribution, base_value, prediction, explanation_text), BatchPredictionRequest (students: List[PredictionRequest], max 50), BatchPredictionResponse (results: List[PredictionResponse], summary stats), WhatIfRequest (base prediction fields + variable_to_change: str + new_value: float), WhatIfResponse (original_probability, new_probability, change, variable_changed, insight text).",
+    "Create ai_backend/app/services/explainer.py - Implement SHAP explanation service. Use shap.TreeExplainer if XGBoost model is loaded, else compute a simple permutation-based feature importance. Return SHAP values for each of the 6 features with human-readable explanations in Indonesian. Handle case where SHAP is not available gracefully (return feature importance from model weights as fallback).",
+    "Add POST /api/explain endpoint in ai_backend/app/main.py - Accept ExplainRequest, compute scores same way as /api/predict, then call explainer service to get SHAP values. Return ExplainResponse with per-feature contributions sorted by absolute impact.",
+    "Add POST /api/predict/batch endpoint in ai_backend/app/main.py - Accept BatchPredictionRequest with list of students (max 50). Loop through each student, call the same prediction logic as /api/predict, collect results. Return BatchPredictionResponse with all individual results plus summary (avg_probability, highest, lowest, count).",
+    "Add POST /api/what-if endpoint in ai_backend/app/main.py - Accept WhatIfRequest. Compute baseline prediction with current values, then modify the specified variable (avg_score, school_ranking, school_accreditation, or target_program_id), recompute prediction, and return both probabilities with the delta and an insight message in Indonesian explaining what the change means.",
+    "Update metrics collector to track explain, batch, and what-if endpoint usage"
+  ],
+  "acceptance_criteria": [
+    "All 47 existing tests still pass",
+    "POST /api/explain returns SHAP-like feature contributions for a valid prediction request",
+    "POST /api/predict/batch accepts up to 50 students and returns array of predictions with summary",
+    "POST /api/predict/batch returns 422 if more than 50 students submitted",
+    "POST /api/what-if returns original_probability, new_probability, and change delta",
+    "All new endpoints return proper error responses for invalid input",
+    "Fallback works if SHAP library fails to compute (uses model feature importances)"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/Lomba-HackatonAMD && python -m pytest ai_backend/tests/ -v",
+    "All tests pass including new tests for explain, batch, and what-if endpoints"
+  ],
+  "blocked_reason": null,
+  "findings": "All 109 tests pass (72 existing + 37 new). SHAP TreeExplainer works with the loaded XGBoost model. Fallback to feature-importance-based pseudo-SHAP values works when SHAP fails. Batch endpoint validates max 50 and min 1 students via Pydantic field_validator. What-if endpoint validates variable_to_change against allowed list and casts new_value appropriately. Insight messages are generated in Indonesian. Metrics collector tracks total_explanations, total_batch_requests, and total_what_if."
+}

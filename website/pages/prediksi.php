@@ -205,6 +205,18 @@ $prefill_program_id = isset($_GET['program_id']) ? htmlspecialchars($_GET['progr
                     </div>
                 </div>
 
+                <!-- SHAP Explanation -->
+                <div class="card hidden mt-2" id="shapExplanation">
+                    <h4 class="mb-2"><i class="fas fa-chart-bar text-blue"></i> Mengapa?</h4>
+                    <p class="text-muted mb-2" style="font-size:0.85rem;">Kontribusi setiap fitur terhadap hasil prediksi Anda (hijau = positif, merah = negatif)</p>
+                    <canvas id="shapCanvas" width="400" height="250" style="width:100%;height:auto;"></canvas>
+                </div>
+
+                <!-- Ask Advisor Button -->
+                <button id="askAdvisorBtn" class="btn btn-primary btn-block mt-2 hidden" onclick="window.location.href='advisor.php?fromPrediction=1'">
+                    <i class="fas fa-robot"></i> Tanya AI Advisor tentang ini
+                </button>
+
                 <!-- Tips Card -->
                 <div class="card mt-2" data-aos="fade-up" data-aos-delay="300">
                     <h4 class="mb-2"><i class="fas fa-lightbulb text-blue"></i> Tips</h4>

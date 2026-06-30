@@ -62,6 +62,20 @@ require_once $base_path . 'includes/functions.php';
                             <a href="<?php echo $base_path; ?>pages/dashboard_guru.php" class="nav-link">Siswa Saya</a>
                         </li>
                         <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>pages/batch_prediction.php" class="nav-link">Batch Prediksi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>pages/profil.php" class="nav-link">Profil</a>
+                        </li>
+                    <?php elseif ($nav_user['role'] === 'admin'): ?>
+                        <!-- Admin Navigation -->
+                        <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>index.php" class="nav-link">Beranda</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>pages/metrics.php" class="nav-link">Metrics</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="<?php echo $base_path; ?>pages/profil.php" class="nav-link">Profil</a>
                         </li>
                     <?php else: ?>
@@ -74,6 +88,12 @@ require_once $base_path . 'includes/functions.php';
                         </li>
                         <li class="nav-item">
                             <a href="<?php echo $base_path; ?>pages/rekomendasi.php" class="nav-link">Rekomendasi</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>pages/advisor.php" class="nav-link">AI Advisor</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>pages/what_if.php" class="nav-link">What-If</a>
                         </li>
                         <li class="nav-item">
                             <a href="<?php echo $base_path; ?>pages/peta_universitas.php" class="nav-link">Peta Universitas</a>
@@ -103,11 +123,17 @@ require_once $base_path . 'includes/functions.php';
                 <?php if (is_logged_in()): ?>
                     <?php $action_user = get_user(); ?>
                     <?php $dashboard_link = ($action_user['role'] === 'guru') ? $base_path . 'pages/dashboard_guru.php' : $base_path . 'pages/dashboard_student.php'; ?>
+                    <button class="btn btn-ghost btn-sm" onclick="toggleDarkMode()" id="darkModeToggle" title="Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
                     <a href="<?php echo $dashboard_link; ?>" class="btn btn-outline btn-sm">
                         <i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($action_user['full_name']); ?>
                     </a>
                     <a href="<?php echo $base_path; ?>api/auth.php?action=logout" class="btn btn-sm btn-ghost">Keluar</a>
                 <?php else: ?>
+                    <button class="btn btn-ghost btn-sm" onclick="toggleDarkMode()" id="darkModeToggle" title="Dark Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
                     <a href="<?php echo $base_path; ?>pages/login.php" class="btn btn-outline btn-sm">Masuk</a>
                     <a href="<?php echo $base_path; ?>pages/register.php" class="btn btn-primary btn-sm">Daftar</a>
                 <?php endif; ?>

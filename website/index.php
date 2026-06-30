@@ -272,6 +272,78 @@ include 'includes/header.php';
     </div>
 </section>
 
+<!-- Powered by AMD Section -->
+<section class="section" style="background: linear-gradient(135deg, #1A1A2E 0%, #16213E 100%);">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up" style="color: white;">
+            <h2 style="color: white;"><i class="fas fa-microchip" style="color: #E4002B;"></i> Powered by AMD</h2>
+            <p style="color: rgba(255,255,255,0.8);">Didukung infrastruktur komputasi GPU AMD untuk performa AI terbaik</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card hover-lift" data-aos="fade-up" data-aos-delay="100" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="feature-icon" style="color: #E4002B;">
+                    <i class="fas fa-server"></i>
+                </div>
+                <h3 style="color: white;">AMD Developer Cloud</h3>
+                <p style="color: rgba(255,255,255,0.7);">Model ML dilatih menggunakan AMD Developer Cloud dengan GPU AMD Instinct MI210/MI250X untuk akselerasi training XGBoost yang optimal.</p>
+            </div>
+
+            <div class="feature-card hover-lift" data-aos="fade-up" data-aos-delay="200" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="feature-icon" style="color: #E4002B;">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h3 style="color: white;">ROCm Platform</h3>
+                <p style="color: rgba(255,255,255,0.7);">Menggunakan ROCm (Radeon Open Compute) sebagai platform komputasi GPU open-source untuk machine learning dan deep learning.</p>
+            </div>
+
+            <div class="feature-card hover-lift" data-aos="fade-up" data-aos-delay="300" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="feature-icon" style="color: #E4002B;">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <h3 style="color: white;">Performa Tinggi</h3>
+                <p style="color: rgba(255,255,255,0.7);">AMD Instinct MI250X dengan 128GB HBM2e dan bandwidth 3.2 TB/s memberikan speedup 5-10x untuk training model histogram-based.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- AI Technology Stack Section -->
+<section class="section">
+    <div class="container">
+        <div class="section-header" data-aos="fade-up">
+            <h2><i class="fas fa-layer-group" style="color: #0071C5;"></i> AI Technology Stack</h2>
+            <p>Pipeline machine learning modern yang dioptimasi untuk prediksi akurat dan cepat</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card hover-lift" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>XGBoost + AMD GPU</h3>
+                <p>Model Gradient Boosting dilatih dengan XGBoost GPU hist method pada AMD Instinct GPU untuk akurasi R2 &gt; 0.95 pada prediksi probabilitas SNBP.</p>
+            </div>
+
+            <div class="feature-card hover-lift" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <h3>Fireworks AI LLM</h3>
+                <p>AI Advisor menggunakan Large Language Model dari Fireworks AI untuk memberikan saran akademik kontekstual dalam Bahasa Indonesia dengan multi-turn conversation.</p>
+            </div>
+
+            <div class="feature-card hover-lift" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>FastAPI Backend</h3>
+                <p>Backend Python dengan FastAPI untuk serving model ML secara real-time, mendukung prediksi dalam hitungan milidetik dengan auto-scaling.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- CTA Section -->
 <section class="cta-section">
     <div class="container">

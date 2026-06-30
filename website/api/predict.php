@@ -48,6 +48,7 @@ foreach ($required as $field) {
 }
 
 require_once '../config/database.php';
+require_once '../config/ai_backend.php';
 
 $pdo = getDBConnection();
 if (!$pdo) {
@@ -56,8 +57,49 @@ if (!$pdo) {
     exit;
 }
 
-// Calculate prediction
-$prediction = calculatePrediction($input, $pdo);
+// === Try AI Backend first, fall back to deterministic formula ===
+$predictionSource = 'deterministic';
+
+$aiPayload = [
+    'scores' => $input['scores'],
+    'school_ranking' => (int)$input['school_ranking'],
+    'total_students' => (int)$input['total_students'],
+    'school_accreditation' => $input['school_accreditation'],
+    'target_program_id' => $input['target_program_id'],
+    'jurusan' => isset($input['jurusan']) ? $input['jurusan'] : '',
+];
+
+$aiResponse = callAIBackend('/api/predict', $aiPayload);
+
+if ($aiResponse !== null && isset($aiResponse['probability'])) {
+    // AI Backend responded successfully - merge with local data (admission history, peer count, etc.)
+    $predictionSource = 'ai';
+    error_log('predict.php: Using AI backend response');
+
+    // Get additional data that only PHP/DB can provide (admission history, peer count)
+    $localPrediction = calculatePrediction($input, $pdo);
+
+    // Use AI probability and confidence but keep local data for admission history and peer count
+    $prediction = [
+        'success' => true,
+        'probability' => $aiResponse['probability'],
+        'confidence_lower' => $aiResponse['confidence_lower'] ?? $localPrediction['confidence_lower'],
+        'confidence_upper' => $aiResponse['confidence_upper'] ?? $localPrediction['confidence_upper'],
+        'variables' => $aiResponse['variables'] ?? $localPrediction['variables'],
+        'admission_history' => $localPrediction['admission_history'],
+        'recommendations' => $aiResponse['recommendations'] ?? $localPrediction['recommendations'],
+        'blocks_choice2' => $localPrediction['blocks_choice2'],
+        'peer_count' => $localPrediction['peer_count'],
+        'input_summary' => $aiResponse['input_summary'] ?? $localPrediction['input_summary'],
+        'timestamp' => date('c'),
+        'source' => 'ai'
+    ];
+} else {
+    // AI Backend unavailable - fall back to deterministic formula
+    error_log('predict.php: AI backend unavailable, using deterministic fallback');
+    $prediction = calculatePrediction($input, $pdo);
+    $prediction['source'] = 'deterministic';
+}
 
 http_response_code(200);
 echo json_encode($prediction);

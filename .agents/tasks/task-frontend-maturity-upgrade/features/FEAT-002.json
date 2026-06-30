@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Integrate SHAP explanation into prediksi.php, add Prediction-to-Advisor bridge, update navigation in header.php, and add dark mode toggle.",
+  "status": "completed",
+  "steps": [
+    "Modify website/pages/prediksi.php - After the existing whatIfSimulator card div (line ~180), add a new hidden section with id='shapExplanation' that contains: a heading 'Mengapa?', a canvas element for the horizontal bar chart (id='shapCanvas', width 100%, height auto), and a brief description text. This section will be shown after prediction results come back.",
+    "Modify website/pages/prediksi.php - After the SHAP section, add a 'Tanya AI Advisor tentang ini' button (id='askAdvisorBtn', class='btn btn-primary btn-block mt-2', hidden by default). When clicked, it stores the prediction context in sessionStorage and navigates to advisor.php.",
+    "Modify website/assets/js/predictions.js - In the ajaxRequest callback after displayPredictionResult(), add: (1) call to a new function displayShapExplanation(response) that calls ../api/explain.php with the same formData, then renders a horizontal bar chart on the canvas showing feature contributions (green for positive, red for negative). (2) Show the 'Ask Advisor' button and store prediction data in sessionStorage under key 'lastPrediction'.",
+    "Modify website/assets/js/advisor.js - On DOMContentLoaded, check if sessionStorage has 'lastPrediction'. If so, and if URL has ?fromPrediction=1 param, automatically send an initial message like 'Tolong analisis hasil prediksi SNBP saya: [context summary]' without user needing to type.",
+    "Modify website/includes/header.php - In the student navigation section, add nav items for: 'What-If' linking to pages/what_if.php (after AI Advisor). In the guru navigation section, add: 'Batch Prediksi' linking to pages/batch_prediction.php. Add an admin-only nav item for 'Metrics' linking to pages/metrics.php (show if role === 'admin'). Keep the navigation clean and professional.",
+    "Modify website/includes/header.php - Add a dark mode toggle button in the nav-actions div (before the user profile button). Use a moon/sun icon that toggles. It should call a JS function toggleDarkMode().",
+    "Add dark mode CSS to website/assets/css/style.css - Define a body.dark-mode selector that overrides CSS custom properties: --color-bg to #1A1A2E, --color-bg-card to #2D2D44, --color-text to #E0E0E0, --color-text-light to #B0B0B0, --color-border to #3D3D5C, etc. Add smooth transition on body for background-color and color.",
+    "Add dark mode JS to website/assets/js/main.js - Add function toggleDarkMode() that toggles 'dark-mode' class on body, saves preference to localStorage('darkMode'), and updates the icon. On DOMContentLoaded, check localStorage and apply dark mode if previously enabled."
+  ],
+  "acceptance_criteria": [
+    "After prediction in prediksi.php, a 'Mengapa?' section appears with a canvas-based horizontal bar chart showing SHAP feature contributions",
+    "A 'Tanya AI Advisor tentang ini' button appears after prediction and navigates to advisor.php?fromPrediction=1 with context stored in sessionStorage",
+    "advisor.php auto-sends initial analysis message when accessed via the bridge (fromPrediction=1 param)",
+    "header.php navigation includes What-If link for students, Batch Prediksi for guru, Metrics for admin",
+    "Dark mode toggle in header switches theme with smooth transition and persists via localStorage",
+    "All existing PHP pages still render without errors",
+    "Backend tests still pass unchanged"
+  ],
+  "verification": [
+    "Run: php -l website/pages/prediksi.php && php -l website/includes/header.php to verify PHP syntax",
+    "Run: cd ai_backend && python -m pytest tests/ -v --tb=short to confirm backend tests still pass",
+    "Verify dark mode CSS variables are defined in style.css by grepping for 'dark-mode'",
+    "Verify toggleDarkMode function exists in main.js"
+  ],
+  "blocked_reason": null,
+  "findings": "All 6 file modifications completed successfully. PHP syntax and JS syntax checks pass. Backend tests pass (109 tests). Added roundRect fallback for older browser compatibility. Dark mode toggle uses localStorage for persistence. SHAP canvas chart sorts by absolute value and limits to top 8 features."
+}

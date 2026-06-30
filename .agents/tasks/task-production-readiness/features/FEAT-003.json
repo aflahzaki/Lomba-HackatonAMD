@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-003",
+  "type": "chore",
+  "description": "Add Docker health checks, restart policies to docker-compose.yml, and create CI/CD pipeline (.github/workflows/ci.yml). Add comprehensive tests for all new endpoints and middleware.",
+  "status": "completed",
+  "steps": [
+    "Update docker-compose.yml: Add healthcheck to ai-backend service (test: curl -f http://localhost:8000/api/health || exit 1, interval 30s, timeout 10s, retries 3, start_period 40s). Add restart: unless-stopped to all three services (php-frontend, ai-backend, mysql). Add expose: ['8000'] to ai-backend. Update ai-backend depends_on to not block other services.",
+    "Create .github/workflows/ci.yml: Trigger on push and pull_request to main and feat/* branches. Job 'test' runs on ubuntu-latest: checkout, setup Python 3.10, pip install -r ai_backend/requirements.txt, run pytest ai_backend/tests/ -v --tb=short. Job 'docker-build' runs on ubuntu-latest: checkout, docker build -t langkahkampus-ai:test -f ai_backend/Dockerfile . (just build, no push). Both jobs should have reasonable timeout (10 min).",
+    "Create ai_backend/tests/test_middleware.py - Tests for: security headers present on all responses, rate limit returns 429 after exceeding limit, metrics endpoint returns expected JSON structure, global error handler returns consistent format, structured logging middleware doesn't break responses.",
+    "Create ai_backend/tests/test_advanced_endpoints.py - Tests for: POST /api/explain with valid data returns shap_values list with 6 features, POST /api/predict/batch with 3 students returns 3 results and summary, POST /api/predict/batch with 51 students returns 422, POST /api/what-if returns probability delta, POST /api/what-if with invalid variable returns 422.",
+    "Ensure all new test files follow the same pattern as existing tests (sys.path insertion, predictor fixture, TestClient usage)"
+  ],
+  "acceptance_criteria": [
+    "docker-compose.yml has healthcheck for ai-backend service",
+    "All services in docker-compose.yml have restart: unless-stopped",
+    ".github/workflows/ci.yml exists and defines test + docker-build jobs",
+    "ai_backend/tests/test_middleware.py has tests for security headers, rate limiting, metrics, error handling",
+    "ai_backend/tests/test_advanced_endpoints.py has tests for explain, batch, what-if endpoints",
+    "Running python -m pytest ai_backend/tests/ -v passes ALL tests (old and new)"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/Lomba-HackatonAMD && python -m pytest ai_backend/tests/ -v",
+    "All tests pass with 0 failures"
+  ],
+  "blocked_reason": null,
+  "findings": "All 109 tests pass. Docker health check uses curl to hit /api/health endpoint. CI/CD pipeline has two jobs: test (Python 3.10, pytest) and docker-build (builds ai-backend image). Test files test_middleware.py and test_advanced_endpoints.py already existed from FEAT-001 and FEAT-002 implementations. No new test files needed."
+}

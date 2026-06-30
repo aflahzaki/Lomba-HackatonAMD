@@ -434,3 +434,23 @@ function validateForm(form) {
 function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+/* === Dark Mode Toggle === */
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    var isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+    var icon = document.querySelector('#darkModeToggle i');
+    if (icon) {
+        icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    }
+}
+
+// Apply saved dark mode preference
+(function() {
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        var icon = document.querySelector('#darkModeToggle i');
+        if (icon) icon.className = 'fas fa-sun';
+    }
+})();

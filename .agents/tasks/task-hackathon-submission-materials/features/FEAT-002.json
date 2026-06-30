@@ -1,0 +1,26 @@
+{
+  "id": "FEAT-002",
+  "type": "docs",
+  "description": "Address review findings: fix branch name in checklist, soften Fireworks AI AMD claims, trim video script Segment 5, move XAI image from Slide 5 to Slide 7",
+  "status": "completed",
+  "steps": [
+    "Fix SUBMISSION_GUIDE.md checklist to reference `main` instead of the feature branch",
+    "Soften Fireworks AI AMD hardware claims across all documents to note it is based on Fireworks AI's infrastructure details rather than stated as verified fact",
+    "Trim VIDEO_SCRIPT.md Segment 5 narration from ~150 words to ~100 words by removing redundant HIP explanation",
+    "Move xai_framework_comparison.png from Slide 5 (Architecture) to Slide 7 (ML Performance) in SLIDE_OUTLINE.md"
+  ],
+  "acceptance_criteria": [
+    "SUBMISSION_GUIDE.md checklist references `main` branch with note about merging before submission",
+    "Fireworks AI AMD claims are softened with qualifying language across all documents",
+    "VIDEO_SCRIPT.md Segment 5 narration is approximately 100 words (fits 45 seconds)",
+    "xai_framework_comparison.png is referenced on Slide 7 (ML Performance) not Slide 5 (Architecture)"
+  ],
+  "verification": [
+    "Verify SUBMISSION_GUIDE.md checklist no longer says feat/ai-backend-integration",
+    "Verify Fireworks AI wording is softened in README, AMD_USAGE.md, VIDEO_SCRIPT.md",
+    "Verify Segment 5 narration word count is roughly 100 words",
+    "Verify Slide 5 does not reference xai_framework_comparison.png and Slide 7 does"
+  ],
+  "blocked_reason": null,
+  "findings": "All four review issues addressed. Branch checklist now says to merge to main before submission. Fireworks AI claims softened across README, SUBMISSION_GUIDE, AMD_USAGE, VIDEO_SCRIPT, and SLIDE_OUTLINE. Video script Segment 5 trimmed from ~150 words to ~82 words (well within 45s at natural pace). XAI framework image moved from Slide 5 to Slide 7."
+}
