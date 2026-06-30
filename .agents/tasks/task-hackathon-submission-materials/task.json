@@ -1,0 +1,7 @@
+{
+  "task_id": "task-hackathon-submission-materials",
+  "task_description": "Create final hackathon submission materials including SUBMISSION_GUIDE.md, docs/VIDEO_SCRIPT.md, docs/SLIDE_OUTLINE.md, docs/AMD_USAGE.md, and update README.md with Submission and AMD Platform Integration sections",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

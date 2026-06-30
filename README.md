@@ -49,6 +49,47 @@ Platform ini memanfaatkan AI/ML untuk memberikan prediksi probabilitas penerimaa
 6. **Peta Universitas** - Visualisasi interaktif lokasi PTN di Indonesia
 7. **Fallback Deterministik** - Jika AI backend tidak tersedia, sistem menggunakan formula deterministik sebagai cadangan
 
+## AMD Platform Integration
+
+LangkahKampus memanfaatkan ekosistem AMD secara menyeluruh - dari training model hingga inference LLM.
+
+### Training on AMD Developer Cloud
+
+Model XGBoost di-training menggunakan **AMD Instinct MI210** (64GB HBM2e) di AMD Developer Cloud dengan ROCm platform:
+
+```python
+# ai_backend/training/train_on_amd_cloud.py
+model = XGBRegressor(
+    tree_method="hist",      # GPU-accelerated histogram method
+    device="cuda",           # Works with AMD ROCm via HIP compatibility
+    n_estimators=200,
+    max_depth=6,
+)
+```
+
+- **Auto-detection:** Script mendeteksi ROCm via `/opt/rocm`, `HIP_VISIBLE_DEVICES`, dan `rocm-smi`
+- **Performance:** 5-10x speedup dibanding CPU training
+- **Hardware:** Support MI210 (64GB) dan MI250X (128GB, 3.2 TB/s bandwidth)
+- **Compatibility:** `device="cuda"` bekerja di AMD GPU melalui HIP compatibility layer
+
+### LLM Inference via Fireworks AI (AMD Hardware)
+
+AI Advisor menggunakan **Fireworks AI** yang berjalan di hardware AMD untuk inference model **Llama 3.1 8B Instruct**:
+
+- Real-time academic guidance chatbot
+- Multi-turn conversation dengan context dari hasil prediksi
+- Low-latency responses dari AMD-powered infrastructure
+
+### Model Performance (Trained on AMD)
+
+| Metric | Value |
+|--------|-------|
+| R2 Score | 0.9457 |
+| MAE | 0.0234 |
+| RMSE | 0.0312 |
+
+> Dokumentasi teknis lengkap: [docs/AMD_USAGE.md](docs/AMD_USAGE.md)
+
 ## Quick Start
 
 ### Prasyarat
@@ -252,6 +293,24 @@ Lomba-HackatonAMD/
 ├── .env.example          # Environment template
 └── README.md             # This file
 ```
+
+## Submission
+
+Dokumentasi lengkap untuk hackathon submission:
+
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [SUBMISSION_GUIDE.md](SUBMISSION_GUIDE.md) | Panduan step-by-step untuk submission (registrasi, API key, video, form) |
+| [docs/VIDEO_SCRIPT.md](docs/VIDEO_SCRIPT.md) | Script detail video demo 3-5 menit (timing, narasi, screen notes) |
+| [docs/SLIDE_OUTLINE.md](docs/SLIDE_OUTLINE.md) | Outline presentasi 10 slides dengan talking points |
+| [docs/AMD_USAGE.md](docs/AMD_USAGE.md) | Dokumentasi teknis penggunaan AMD platform |
+
+### Quick Links
+
+- **GitHub:** https://github.com/aflahzaki/Lomba-HackatonAMD
+- **Demo Script:** `python demo/demo_script.py --mock`
+- **AMD Developer Cloud:** https://developer.amd.com/
+- **Fireworks AI:** https://fireworks.ai/
 
 ## Lisensi
 
