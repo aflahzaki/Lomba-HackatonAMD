@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "fix",
   "description": "Address code review issues: fix SHAP chart rendering, What-If deterministic fallback, batch prediction schema mapping, role guards, dark mode coverage, and advisor history validation.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Fix predictions.js: change response.explanation check to response.features, and use item.contribution instead of item.shap_value for bar magnitude",
     "Fix what_if.php: replace rand(3,12) with deterministic fixed offset (e.g., max(5, $new_probability - 8))",
@@ -29,5 +29,5 @@
     "cd ai_backend && python -m pytest tests/ -v --tb=short"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 6 review issues fixed successfully. PHP syntax verified (php -l). JS syntax verified (node --check). All 109 backend tests pass. Dark mode now covers 21 CSS variables plus form inputs, cards, and code blocks. SHAP chart uses response.features and item.contribution. What-If uses fixed offset of 8 for deterministic results. Batch predict transforms field names to match Python schema. Advisor validates history array structure. Role guards follow the dashboard_guru.php pattern with require_role()."
 }
