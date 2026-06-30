@@ -9,14 +9,6 @@
     "tests": "pass",
     "test_quality": "pass",
     "docker_build": "pass",
-    "summary": "All 34 pytest tests pass (including new invalid score test). Both Docker images build successfully with project-root context. Review fixes applied: (1) SIDATA SQL now COPYed into container and volume-mounted at runtime, (2) CORS allow_credentials set to False, (3) ai-backend ports removed from docker-compose (internal only), (4) score validation with proper 422 errors, (5) circular training signal documented in train_model.py, (6) advisor message sanitization added."
-  },
-  "review_fixes_applied": [
-    "SIDATA SQL available in container via COPY and volume mount; config.py path resolution works in both contexts",
-    "CORS allow_credentials=False (PHP uses server-side cURL, not browser CORS)",
-    "Removed ports mapping for ai-backend (only accessible via internal Docker network)",
-    "Added try/except for float() score parsing returning 422 on invalid values",
-    "Added documentation comment in train_model.py about circular training limitation",
-    "Added message sanitization in advisor.py (truncation + injection pattern filtering)"
-  ]
+    "summary": "All 44 pytest tests pass (including sanitization, API, predictor, and SIDATA tests). Both Docker images (ai-backend and php-frontend) build successfully. ML model (XGBoost, 6 features, R2=0.9457) is trained and produces valid predictions. FastAPI endpoints all respond correctly. Two review passes completed and all issues addressed: SIDATA mounted in container, CORS fixed, auth hardened (internal-only), score validation added, injection sanitization with test coverage, context injection mitigated, error format standardized."
+  }
 }
