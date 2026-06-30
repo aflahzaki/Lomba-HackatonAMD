@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Create new frontend pages (What-If Simulator, Batch Prediction, Metrics), their PHP API proxy endpoints, and corresponding JavaScript files.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create website/api/explain.php - PHP proxy endpoint that accepts POST with prediction data and calls callAIBackend('/api/explain', $data). Follow the exact pattern of website/api/advisor.php (headers, OPTIONS handling, POST validation, require ai_backend.php, fallback response).",
     "Create website/api/batch_predict.php - PHP proxy endpoint that accepts POST with array of student records, calls callAIBackend('/api/predict/batch', $data). Follow same pattern. Fallback: return deterministic results for each record.",
@@ -31,5 +31,5 @@
     "Run: cd ai_backend && python -m pytest tests/ -v --tb=short to confirm backend tests still pass"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 10 files created successfully. PHP syntax verified with php -l. JS syntax verified with node --check. All 109 backend tests pass. The pages follow existing patterns: $page_title, $page_scripts, include header/footer. API proxies follow advisor.php pattern with OPTIONS handling, POST validation, callAIBackend calls, and JSON fallback responses. metrics.php uses direct cURL GET instead of callAIBackend since that helper is POST-only. JS files use ajaxRequest() helper and showToast() from main.js."
 }
