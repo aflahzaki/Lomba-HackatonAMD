@@ -19,6 +19,7 @@ services:
         condition: service_healthy
       ai-backend:
         condition: service_started
+    restart: unless-stopped
     networks:
       - langkahkampus-net
 
@@ -26,12 +27,21 @@ services:
     build:
       context: .
       dockerfile: ai_backend/Dockerfile
+    expose:
+      - "8000"
     environment:
       - FIREWORKS_API_KEY=${FIREWORKS_API_KEY:-}
       - HOST=0.0.0.0
       - PORT=8000
     volumes:
       - ./database/seed_sidata.sql:/database/seed_sidata.sql:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
     networks:
       - langkahkampus-net
 
@@ -53,6 +63,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    restart: unless-stopped
     networks:
       - langkahkampus-net
 

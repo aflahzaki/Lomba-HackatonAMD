@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "chore",
   "description": "Add Docker health checks, restart policies to docker-compose.yml, and create CI/CD pipeline (.github/workflows/ci.yml). Add comprehensive tests for all new endpoints and middleware.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Update docker-compose.yml: Add healthcheck to ai-backend service (test: curl -f http://localhost:8000/api/health || exit 1, interval 30s, timeout 10s, retries 3, start_period 40s). Add restart: unless-stopped to all three services (php-frontend, ai-backend, mysql). Add expose: ['8000'] to ai-backend. Update ai-backend depends_on to not block other services.",
     "Create .github/workflows/ci.yml: Trigger on push and pull_request to main and feat/* branches. Job 'test' runs on ubuntu-latest: checkout, setup Python 3.10, pip install -r ai_backend/requirements.txt, run pytest ai_backend/tests/ -v --tb=short. Job 'docker-build' runs on ubuntu-latest: checkout, docker build -t langkahkampus-ai:test -f ai_backend/Dockerfile . (just build, no push). Both jobs should have reasonable timeout (10 min).",
