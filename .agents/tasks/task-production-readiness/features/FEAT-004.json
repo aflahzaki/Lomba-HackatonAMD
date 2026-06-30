@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "fix",
   "description": "Address code review issues: wire metrics.record_request(), fix CSP for Swagger UI paths, remove dead global_exception_handler registration, and add trade-off comments for known hackathon limitations.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Wire metrics.record_request(path, response_time_ms) into StructuredLoggingMiddleware.dispatch after computing response time",
     "Exclude /docs, /redoc, and /openapi.json from CSP header in SecurityHeadersMiddleware",
@@ -21,5 +21,5 @@
     "Run: cd /projects/sandbox/Lomba-HackatonAMD && python -m pytest ai_backend/tests/ -v"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 109 tests pass after changes. metrics.record_request() is now called in both the success and error paths of the logging middleware. CSP is skipped for /docs, /redoc, /openapi.json using str.startswith check on the request path. The global_exception_handler import and registration were removed from main.py but the error_handler.py file is preserved with documentation explaining its reference role."
 }
