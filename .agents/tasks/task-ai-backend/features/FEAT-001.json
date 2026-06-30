@@ -1,0 +1,38 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Build the complete Python AI backend with ML model training, FastAPI endpoints, Fireworks AI advisor integration, and tests",
+  "status": "in_progress",
+  "steps": [
+    "Create ai_backend/ directory structure: app/__init__.py, app/main.py, app/models/__init__.py, app/models/predictor.py, app/services/__init__.py, app/services/advisor.py, app/services/recommender.py, app/schemas/__init__.py, app/schemas/prediction.py, app/config.py, training/, models/, tests/",
+    "Create ai_backend/training/prepare_data.py - Parse database/seed_sidata.sql file directly (regex on INSERT statements) to extract all 3058 study programs with columns: kode_univ, kode_prodi, nama_prodi, jenjang, daya_tampung_2023, peminat_2018-2022, daya_tampung_2018-2022. Generate training features: competition_ratio (peminat/daya_tampung for each year), applicant_trend (growth rate), capacity_trend, absolute capacity. Save as CSV for training.",
+    "Create ai_backend/training/train_model.py - Load prepared data, engineer features (competition_ratio_2022, ratio_trend, peminat_growth_rate, daya_tampung_avg, peminat_volatility). Train an XGBoost/GradientBoosting model that predicts acceptance probability given: average_score, school_ranking_percentile (ranking/total), school_accreditation (encoded), competition_ratio, applicant_trend, daya_tampung. Since we lack individual student outcome data, train a model that maps program difficulty features + student features to a calibrated probability score. Use synthetic training data generated from the formula in predict.php as ground truth but with added noise and non-linearity. Save model to ai_backend/models/prediction_model.joblib",
+    "Create ai_backend/training/evaluate.py - Load model, run evaluation metrics (cross-validation score, feature importances), print a report",
+    "Create ai_backend/app/config.py - Pydantic settings with FIREWORKS_API_KEY, MODEL_PATH (default: models/prediction_model.joblib), HOST, PORT, CORS origins, database URL",
+    "Create ai_backend/app/schemas/prediction.py - Pydantic models: PredictionRequest (scores dict, school_ranking int, total_students int, school_accreditation str, target_program_id str, jurusan optional str), PredictionResponse (probability float, confidence_lower float, confidence_upper float, variables list, recommendations list, input_summary dict), RecommendRequest, RecommendResponse, AdvisorRequest (message str, context optional dict with prediction results), AdvisorResponse (reply str, suggestions list)",
+    "Create ai_backend/app/models/predictor.py - Load joblib model at startup, implement predict() that takes student features + program SIDATA data, returns probability with confidence intervals. Also implement a fallback deterministic formula matching predict.php logic for when model is unavailable. Parse seed_sidata.sql at startup to build an in-memory lookup dict of program data (keyed by nama_prodi and kode_prodi).",
+    "Create ai_backend/app/services/recommender.py - Given a target program and student profile, find similar programs with lower competition ratios from the in-memory SIDATA data. Rank by predicted probability if model is available.",
+    "Create ai_backend/app/services/advisor.py - Integrate with Fireworks AI API (https://api.fireworks.ai/inference/v1/chat/completions). Build a system prompt that includes the student's prediction results, variable breakdown, and SNBP context. The advisor explains WHY the student has high/low chances, gives actionable improvement advice, and answers SNBP strategy questions. Use httpx async client. Model: accounts/fireworks/models/llama-v3p1-8b-instruct (or similar available model).",
+    "Create ai_backend/app/main.py - FastAPI app with: POST /api/predict (ML prediction), POST /api/recommend (smart recommendations), POST /api/advisor (AI chatbot), GET /api/health (health check with model status). Include CORS middleware, startup event to load model and SIDATA data, proper error handling.",
+    "Create ai_backend/requirements.txt with: fastapi>=0.100.0, uvicorn[standard]>=0.22.0, scikit-learn>=1.3.0, xgboost>=1.7.0, pandas>=2.0.0, numpy>=1.24.0, joblib>=1.3.0, httpx>=0.24.0, pydantic>=2.0.0, pydantic-settings>=2.0.0, python-dotenv>=1.0.0, pytest>=7.0.0, pytest-asyncio>=0.21.0",
+    "Create ai_backend/tests/test_predictor.py - Test model loading, prediction with valid inputs, edge cases (extreme scores, missing data), confidence interval bounds",
+    "Create ai_backend/tests/test_api.py - Test all FastAPI endpoints using TestClient: /api/health returns 200, /api/predict with valid payload returns probability 0-100, /api/recommend returns list, /api/advisor returns reply (mock the Fireworks API call)",
+    "Run the training pipeline: python ai_backend/training/prepare_data.py && python ai_backend/training/train_model.py to generate the model file",
+    "Run pytest on ai_backend/tests/ to verify all tests pass"
+  ],
+  "acceptance_criteria": [
+    "ai_backend/models/prediction_model.joblib exists and is a valid sklearn/xgboost model",
+    "Running 'python -m pytest ai_backend/tests/ -v' passes all tests",
+    "FastAPI app starts without errors: 'cd ai_backend && uvicorn app.main:app --host 0.0.0.0 --port 8000' responds to GET /api/health",
+    "POST /api/predict with valid student data returns probability between 0-100 with confidence intervals",
+    "POST /api/recommend returns alternative programs with lower competition",
+    "POST /api/advisor returns a meaningful reply (even with mocked/fallback when no API key)"
+  ],
+  "verification": [
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && pip install -r requirements.txt && python training/prepare_data.py && python training/train_model.py",
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && python -m pytest tests/ -v",
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && timeout 10 uvicorn app.main:app --host 0.0.0.0 --port 8000 & sleep 3 && curl -s http://localhost:8000/api/health && kill %1"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

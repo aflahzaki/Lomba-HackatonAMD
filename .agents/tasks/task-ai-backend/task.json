@@ -1,0 +1,7 @@
+{
+  "task_id": "task-ai-backend",
+  "task_description": "Build a Python AI backend for LangkahKampus university admission predictor. Includes ML model training (XGBoost), FastAPI endpoints for prediction/recommendation/AI advisor, Fireworks AI integration for LLM-based explanations, Docker containerization with docker-compose orchestrating PHP frontend + Python backend + MySQL, and PHP integration layer with fallback to deterministic formula.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}
