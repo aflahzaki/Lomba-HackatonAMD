@@ -1472,6 +1472,34 @@ textarea.form-control {
 
 .hidden { display: none !important; }
 
+/* === Dark Mode === */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode {
+    --color-bg: #1A1A2E;
+    --color-bg-card: #2D2D44;
+    --color-text: #E0E0E0;
+    --color-text-light: #B0B0B0;
+    --color-text-muted: #808080;
+    --color-border: #3D3D5C;
+    --color-primary: #4A6FA5;
+    --color-primary-dark: #2E4057;
+}
+
+body.dark-mode .navbar.scrolled {
+    background: rgba(26,26,46,0.95);
+}
+
+body.dark-mode .navbar.scrolled .nav-link {
+    color: #E0E0E0;
+}
+
+body.dark-mode .navbar.scrolled .nav-logo-text {
+    color: #E0E0E0;
+}
+
 /* === Responsive === */
 @media (max-width: 1024px) {
     .footer-grid {

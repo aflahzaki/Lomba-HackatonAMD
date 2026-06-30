@@ -10,6 +10,26 @@ var lastPredictionContextKey = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initChatForm();
+
+    // Auto-send prediction context if navigated from prediksi.php
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('fromPrediction') === '1') {
+        var storedPrediction = sessionStorage.getItem('lastPrediction');
+        if (storedPrediction) {
+            try {
+                var predData = JSON.parse(storedPrediction);
+                var prob = predData.probability || 0;
+                var program = predData.program_name || predData.target_program || 'target';
+                var university = predData.university_name || predData.university || '';
+                var autoMessage = 'Tolong analisis hasil prediksi SNBP saya. Probabilitas: ' + prob + '%, Program: ' + program + ', Universitas: ' + university + '. Berikan saran untuk meningkatkan peluang saya.';
+                setTimeout(function() {
+                    sendMessage(autoMessage);
+                }, 500);
+            } catch (e) {
+                // Ignore parse errors
+            }
+        }
+    }
 });
 
 /* === Chat Form Initialization === */

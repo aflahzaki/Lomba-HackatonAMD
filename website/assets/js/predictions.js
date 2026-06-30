@@ -146,6 +146,12 @@ function initPredictionForm() {
             displayAntiBentrokStats(response);
             displayRecommendations(response);
             displayWhatIfSimulator(response);
+            displayShapExplanation(formData);
+
+            // Show Ask Advisor button and store prediction in sessionStorage
+            var askBtn = document.getElementById('askAdvisorBtn');
+            if (askBtn) askBtn.classList.remove('hidden');
+            sessionStorage.setItem('lastPrediction', JSON.stringify(response));
         });
     });
 }
@@ -478,6 +484,110 @@ function updateConfidenceBar(probability, lower, upper) {
 
     if (lowerText) lowerText.textContent = Math.round(lower * 100) + '%';
     if (upperText) upperText.textContent = Math.round(upper * 100) + '%';
+}
+
+/* === SHAP Explanation Display === */
+function displayShapExplanation(formData) {
+    var section = document.getElementById('shapExplanation');
+    if (!section) return;
+
+    ajaxRequest('../api/explain.php', 'POST', formData, function(error, response) {
+        if (error || !response || !response.explanation) {
+            return;
+        }
+
+        section.classList.remove('hidden');
+        section.style.animation = 'fadeIn 0.5s ease';
+
+        var canvas = document.getElementById('shapCanvas');
+        if (!canvas) return;
+
+        var ctx = canvas.getContext('2d');
+        var features = response.explanation || [];
+
+        if (features.length === 0) return;
+
+        // Sort by absolute SHAP value descending
+        features.sort(function(a, b) {
+            return Math.abs(b.shap_value) - Math.abs(a.shap_value);
+        });
+
+        // Limit to top 8 features
+        features = features.slice(0, 8);
+
+        // Set canvas dimensions for high DPI
+        var dpr = window.devicePixelRatio || 1;
+        var displayWidth = canvas.clientWidth || 400;
+        var displayHeight = Math.max(250, features.length * 35 + 60);
+        canvas.width = displayWidth * dpr;
+        canvas.height = displayHeight * dpr;
+        canvas.style.height = displayHeight + 'px';
+        ctx.scale(dpr, dpr);
+
+        // Clear canvas
+        ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+        // Chart settings
+        var padding = { top: 20, right: 30, bottom: 20, left: 140 };
+        var chartWidth = displayWidth - padding.left - padding.right;
+        var barHeight = 22;
+        var barGap = 10;
+
+        // Find max absolute value for scaling
+        var maxVal = 0;
+        features.forEach(function(f) {
+            if (Math.abs(f.shap_value) > maxVal) maxVal = Math.abs(f.shap_value);
+        });
+        if (maxVal === 0) maxVal = 1;
+
+        // Draw bars
+        features.forEach(function(feature, i) {
+            var y = padding.top + i * (barHeight + barGap);
+            var val = feature.shap_value;
+            var barWidth = (Math.abs(val) / maxVal) * (chartWidth / 2);
+            var x;
+
+            // Color: green for positive, red for negative
+            if (val >= 0) {
+                ctx.fillStyle = '#27AE60';
+                x = padding.left + chartWidth / 2;
+            } else {
+                ctx.fillStyle = '#C0392B';
+                x = padding.left + chartWidth / 2 - barWidth;
+            }
+
+            // Draw bar with rounded corners
+            ctx.beginPath();
+            if (ctx.roundRect) {
+                ctx.roundRect(x, y, barWidth, barHeight, 3);
+            } else {
+                ctx.rect(x, y, barWidth, barHeight);
+            }
+            ctx.fill();
+
+            // Draw feature name
+            ctx.fillStyle = '#2C3E50';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(feature.feature_name || feature.name || 'Feature', padding.left - 8, y + barHeight / 2);
+
+            // Draw value text
+            ctx.fillStyle = val >= 0 ? '#27AE60' : '#C0392B';
+            ctx.font = 'bold 11px Inter, sans-serif';
+            ctx.textAlign = val >= 0 ? 'left' : 'right';
+            var textX = val >= 0 ? x + barWidth + 5 : x - 5;
+            ctx.fillText(val.toFixed(3), textX, y + barHeight / 2);
+        });
+
+        // Draw center line
+        ctx.strokeStyle = '#ADB5BD';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padding.left + chartWidth / 2, padding.top - 5);
+        ctx.lineTo(padding.left + chartWidth / 2, padding.top + features.length * (barHeight + barGap));
+        ctx.stroke();
+    });
 }
 
 /* === Program Search Autocomplete === */
