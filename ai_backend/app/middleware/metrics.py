@@ -12,6 +12,9 @@ class MetricsCollector:
         self.start_time: float = time.time()
         self.total_requests: int = 0
         self.total_predictions: int = 0
+        self.total_explanations: int = 0
+        self.total_batch_requests: int = 0
+        self.total_what_if: int = 0
         self.total_response_time_ms: float = 0.0
         self.endpoint_stats: Dict[str, int] = defaultdict(int)
         self.program_requests: Dict[str, int] = defaultdict(int)
@@ -28,6 +31,18 @@ class MetricsCollector:
         self.total_predictions += 1
         if program_name:
             self.program_requests[program_name] += 1
+
+    def record_explain(self) -> None:
+        """Record an explain request."""
+        self.total_explanations += 1
+
+    def record_batch(self, count: int) -> None:
+        """Record a batch prediction request."""
+        self.total_batch_requests += 1
+
+    def record_what_if(self) -> None:
+        """Record a what-if analysis request."""
+        self.total_what_if += 1
 
     @property
     def avg_response_time_ms(self) -> float:
@@ -57,6 +72,9 @@ class MetricsCollector:
         return {
             "total_predictions": self.total_predictions,
             "total_requests": self.total_requests,
+            "total_explanations": self.total_explanations,
+            "total_batch_requests": self.total_batch_requests,
+            "total_what_if": self.total_what_if,
             "avg_response_time_ms": self.avg_response_time_ms,
             "model_version": self.model_version,
             "uptime_seconds": self.uptime_seconds,
