@@ -73,9 +73,14 @@ def _sanitize_message(message: str) -> str:
     return message.strip()
 
 
+# Maximum number of history entries allowed
+MAX_HISTORY_ENTRIES = 10
+
+
 async def get_advisor_response(
     message: str,
     context: Optional[Dict[str, Any]] = None,
+    history: Optional[List[Dict[str, str]]] = None,
 ) -> Dict[str, Any]:
     """
     Get AI advisor response using Fireworks AI API.
@@ -84,6 +89,20 @@ async def get_advisor_response(
     """
     # Sanitize user message to mitigate prompt injection
     message = _sanitize_message(message)
+
+    # Validate and sanitize conversation history
+    validated_history = []
+    if history:
+        for entry in history[:MAX_HISTORY_ENTRIES]:
+            if isinstance(entry, dict):
+                role = entry.get("role", "")
+                content = entry.get("content", "")
+                if role in ("user", "assistant") and content:
+                    sanitized_content = _sanitize_message(str(content))
+                    if sanitized_content:
+                        validated_history.append(
+                            {"role": role, "content": sanitized_content}
+                        )
 
     if not settings.FIREWORKS_API_KEY:
         return _fallback_response(message, context)
@@ -140,6 +159,10 @@ async def get_advisor_response(
         messages.append(
             {"role": "system", "content": f"Data prediksi siswa:{context_msg}"}
         )
+
+    # Insert conversation history between system/context and current user message
+    for hist_entry in validated_history:
+        messages.append(hist_entry)
 
     messages.append({"role": "user", "content": message})
 

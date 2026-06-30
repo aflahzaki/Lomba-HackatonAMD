@@ -3,6 +3,9 @@
  * Handles chat interface for AI Advisor feature
  */
 
+// Conversation history for multi-turn chat (max 10 exchanges)
+var conversationHistory = [];
+
 document.addEventListener('DOMContentLoaded', function() {
     initChatForm();
 });
@@ -59,6 +62,19 @@ function sendMessage(message) {
         }
     }
 
+    // Include conversation history (limit to last 10 exchanges = 20 messages)
+    if (conversationHistory.length > 0) {
+        payload.history = conversationHistory.slice(-20);
+    }
+
+    // Add user message to conversation history
+    conversationHistory.push({ role: 'user', content: message });
+
+    // Limit history to last 10 exchanges (20 messages)
+    if (conversationHistory.length > 20) {
+        conversationHistory = conversationHistory.slice(-20);
+    }
+
     // Send to backend
     ajaxRequest('../api/advisor.php', 'POST', payload, function(error, response) {
         // Remove typing indicator
@@ -76,6 +92,14 @@ function sendMessage(message) {
 
         if (response && response.reply) {
             appendMessage('bot', response.reply);
+
+            // Add assistant response to conversation history
+            conversationHistory.push({ role: 'assistant', content: response.reply });
+
+            // Limit history to last 10 exchanges (20 messages)
+            if (conversationHistory.length > 20) {
+                conversationHistory = conversationHistory.slice(-20);
+            }
 
             // Update suggestion chips if available
             if (response.suggestions && response.suggestions.length > 0) {

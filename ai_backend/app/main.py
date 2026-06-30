@@ -201,6 +201,7 @@ async def advisor(request: AdvisorRequest):
     result = await get_advisor_response(
         message=request.message,
         context=request.context,
+        history=request.history,
     )
 
     return AdvisorResponse(

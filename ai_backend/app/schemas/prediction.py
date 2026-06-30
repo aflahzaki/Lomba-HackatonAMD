@@ -83,6 +83,9 @@ class AdvisorRequest(BaseModel):
     context: Optional[Dict[str, Any]] = Field(
         None, description="Prediction context for the advisor"
     )
+    history: Optional[List[Dict[str, str]]] = Field(
+        None, description="Conversation history (list of {role, content} dicts)"
+    )
 
 
 class AdvisorResponse(BaseModel):

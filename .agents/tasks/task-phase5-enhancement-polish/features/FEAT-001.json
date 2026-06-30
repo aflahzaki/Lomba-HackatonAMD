@@ -1,0 +1,36 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "AMD GPU Training Enhancement + Model Evaluation Visualization + Improved Multi-turn Advisor + Landing Page AMD Section + Demo Script",
+  "status": "in_progress",
+  "steps": [
+    "1. Create ai_backend/training/train_on_amd_cloud.py - AMD GPU/ROCm training script that: (a) detects ROCm/AMD GPU availability via environment checks (checking for /opt/rocm, HIP_VISIBLE_DEVICES, rocm-smi), (b) if ROCm available, uses XGBoost GPU hist tree_method with gpu_id parameter, (c) if not available, falls back gracefully to CPU training with informational messages, (d) includes detailed comments and print statements explaining AMD Developer Cloud GPU usage, (e) has a section showing how to configure for AMD Instinct MI210/MI250 GPUs, (f) logs timing comparison CPU vs GPU, (g) saves model to same location as train_model.py",
+    "2. Create ai_backend/training/visualize_evaluation.py - Script that generates evaluation charts as PNG files: (a) feature importance horizontal bar chart, (b) prediction vs actual scatter plot (regression equivalent of confusion matrix), (c) prediction distribution histogram (actual vs predicted overlaid), (d) residual plot, (e) saves all figures to ai_backend/training/evaluation_charts/ directory, (f) uses matplotlib and seaborn for publication-quality plots, (g) includes LangkahKampus branding in chart titles",
+    "3. Modify ai_backend/app/schemas/prediction.py - Add conversation_history field to AdvisorRequest: add a field 'history' which is Optional[List[Dict[str, str]]] = None, where each dict has 'role' (user/assistant) and 'content'",
+    "4. Modify ai_backend/app/services/advisor.py - Update get_advisor_response() to accept and use conversation history: (a) add history parameter (Optional[List[Dict[str, str]]]), (b) validate and sanitize history entries (max 10 turns, sanitize each message), (c) insert history messages between system prompt and current user message in the messages list sent to Fireworks API, (d) update fallback response to acknowledge history context",
+    "5. Modify ai_backend/app/main.py - Update the /api/advisor endpoint to pass request.history to get_advisor_response()",
+    "6. Modify website/api/advisor.php - Forward 'history' field from the frontend request to the Python backend",
+    "7. Modify website/assets/js/advisor.js - Maintain conversation history in a JavaScript array, send it with each request: (a) create a conversationHistory array, (b) push user and assistant messages to it after each exchange, (c) include history in the payload sent to advisor.php, (d) limit to last 10 exchanges",
+    "8. Modify website/index.php - Add two new sections before the CTA section: (a) 'Powered by AMD' section showcasing AMD Developer Cloud GPU usage with AMD logo/icon, ROCm mention, performance stats, (b) 'AI Technology Stack' section explaining the ML pipeline (XGBoost trained on AMD GPU, Fireworks AI LLM, FastAPI backend). Use the existing section/card styling patterns.",
+    "9. Create demo/demo_script.py - End-to-end demo script that: (a) calls /api/health to show system status, (b) calls /api/predict with sample student data and displays formatted results, (c) calls /api/advisor with a question about the prediction results, (d) calls /api/advisor again with conversation history to show multi-turn capability, (e) calls /api/recommend with the same student data, (f) includes colorful terminal output with timing information, (g) configurable base URL (defaults to http://localhost:8000), (h) can run standalone without the server (mock mode) for demo recording",
+    "10. Add tests for multi-turn advisor: add test cases in ai_backend/tests/test_api.py for the new history field in the advisor endpoint (test with valid history, test with empty history, test history sanitization)",
+    "11. Update ai_backend/requirements.txt to add matplotlib and seaborn"
+  ],
+  "acceptance_criteria": [
+    "train_on_amd_cloud.py runs successfully on CPU (no ROCm) with graceful fallback messages",
+    "visualize_evaluation.py generates PNG chart files when run",
+    "Advisor endpoint accepts and uses conversation history field without breaking existing behavior",
+    "website/index.php has visible 'Powered by AMD' and 'AI Technology' sections",
+    "demo/demo_script.py runs in mock mode without requiring a live server",
+    "All existing tests still pass",
+    "New advisor history tests pass"
+  ],
+  "verification": [
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && python -m pytest tests/ -v",
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && python training/train_on_amd_cloud.py",
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && python training/visualize_evaluation.py",
+    "cd /projects/sandbox/Lomba-HackatonAMD && python demo/demo_script.py --mock"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

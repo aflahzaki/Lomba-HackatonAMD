@@ -1,0 +1,29 @@
+{
+  "project_type": "Python FastAPI AI backend + PHP frontend, hackathon project (LangkahKampus - SNBP prediction)",
+  "language": "Python (AI backend), PHP (frontend)",
+  "build_system": "pip for Python, Docker Compose for full stack",
+  "test_framework": "pytest with TestClient (FastAPI), tests in ai_backend/tests/",
+  "build_command": "cd ai_backend && python -m pytest tests/ -v",
+  "test_command": "cd ai_backend && python -m pytest tests/ -v",
+  "verification_instructions": "Run pytest in ai_backend directory, verify all tests pass including new ones",
+  "snapshot_or_generated_files": "ai_backend/models/prediction_model.joblib (trained model), ai_backend/training/training_data.csv (synthetic data)",
+  "setup_instructions": "pip install -r ai_backend/requirements.txt (already installed in sandbox)",
+  "environment_constraints": "matplotlib and seaborn installed. No Docker daemon available. No Fireworks API key. ROCm not available (scripts should detect and handle gracefully). Network can fetch pip packages.",
+  "contribution_requirements": "Branch: feat/ai-backend-integration. All code should work without external API keys (fallback behavior).",
+  "key_patterns": "FastAPI endpoints in app/main.py, services in app/services/, schemas in app/schemas/, training scripts in training/. PHP pages in website/pages/, PHP APIs proxy to Python backend via website/api/. Tests use pytest fixtures with TestClient.",
+  "relevant_files": [
+    "ai_backend/training/train_model.py",
+    "ai_backend/training/evaluate.py",
+    "ai_backend/app/services/advisor.py",
+    "ai_backend/app/main.py",
+    "ai_backend/app/schemas/prediction.py",
+    "ai_backend/app/config.py",
+    "ai_backend/tests/test_api.py",
+    "ai_backend/requirements.txt",
+    "website/index.php",
+    "website/api/advisor.php",
+    "website/assets/js/advisor.js",
+    "website/pages/advisor.php"
+  ],
+  "directory_structure": "ai_backend/ (FastAPI app with ML model), website/ (PHP frontend), database/ (SQL schemas), docker-compose.yml (orchestration), demo/ (to be created)"
+}

@@ -41,6 +41,11 @@ if (isset($input['context'])) {
     $payload['context'] = $input['context'];
 }
 
+// Include conversation history if available
+if (isset($input['history']) && is_array($input['history'])) {
+    $payload['history'] = $input['history'];
+}
+
 // Call AI Backend
 $response = callAIBackend('/api/advisor', $payload);
 
