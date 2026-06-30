@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Docker containerization and PHP integration - Dockerfiles, docker-compose, PHP proxy to Python backend with fallback, AI advisor page",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create ai_backend/Dockerfile - Python 3.10-slim base, copy requirements.txt and install deps, copy app/ and models/ directories, expose port 8000, CMD uvicorn app.main:app --host 0.0.0.0 --port 8000",
     "Create Dockerfile.php in project root - php:8.2-apache base, enable mod_rewrite, copy website/ to /var/www/html/, configure Apache ServerName, expose port 80",

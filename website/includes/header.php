@@ -76,6 +76,9 @@ require_once $base_path . 'includes/functions.php';
                             <a href="<?php echo $base_path; ?>pages/rekomendasi.php" class="nav-link">Rekomendasi</a>
                         </li>
                         <li class="nav-item">
+                            <a href="<?php echo $base_path; ?>pages/advisor.php" class="nav-link">AI Advisor</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="<?php echo $base_path; ?>pages/peta_universitas.php" class="nav-link">Peta Universitas</a>
                         </li>
                         <li class="nav-item">

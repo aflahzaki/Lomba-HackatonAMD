@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  php-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    ports:
+      - "8080:80"
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=${MYSQL_DATABASE:-langkahkampus}
+      - DB_USER=root
+      - DB_PASS=${MYSQL_ROOT_PASSWORD:-langkahkampus}
+      - AI_BACKEND_URL=http://ai-backend:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ai-backend:
+        condition: service_started
+    networks:
+      - langkahkampus-net
+
+  ai-backend:
+    build:
+      context: ./ai_backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - FIREWORKS_API_KEY=${FIREWORKS_API_KEY:-}
+      - HOST=0.0.0.0
+      - PORT=8000
+    networks:
+      - langkahkampus-net
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-langkahkampus}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-langkahkampus}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed_data.sql:/docker-entrypoint-initdb.d/02-seed_data.sql
+      - ./database/seed_sidata.sql:/docker-entrypoint-initdb.d/03-seed_sidata.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - langkahkampus-net
+
+volumes:
+  mysql_data:
+
+networks:
+  langkahkampus-net:
+    driver: bridge
