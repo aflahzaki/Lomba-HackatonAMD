@@ -1,4 +1,11 @@
-"""Global exception handler with graceful degradation."""
+"""Global exception handler with graceful degradation.
+
+NOTE: This handler is NOT registered as an app-level exception handler because
+the StructuredLoggingMiddleware already catches all unhandled exceptions higher
+in the Starlette stack. This module is kept as a reference implementation of the
+consistent error response format and can be used if the middleware architecture
+changes in the future.
+"""
 
 from datetime import datetime
 

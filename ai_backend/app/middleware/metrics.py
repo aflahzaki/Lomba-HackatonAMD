@@ -6,7 +6,14 @@ from typing import Any, Dict, List
 
 
 class MetricsCollector:
-    """Collects and reports application metrics in memory."""
+    """Collects and reports application metrics in memory.
+
+    NOTE: Known trade-off for hackathon -- counters use plain int increments
+    and dict mutations without asyncio.Lock or atomic operations. Under
+    concurrent async workers counters may drift slightly. Acceptable for
+    monitoring/demo purposes; use asyncio.Lock or atomic counters if
+    precise accuracy is required in production.
+    """
 
     def __init__(self):
         self.start_time: float = time.time()

@@ -8,7 +8,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 
 from .config import settings
-from .middleware.error_handler import global_exception_handler
 from .middleware.logging import StructuredLoggingMiddleware
 from .middleware.metrics import metrics
 from .middleware.rate_limiter import limiter, rate_limit_exceeded_handler
@@ -79,7 +78,6 @@ app.state.limiter = limiter
 
 # Register exception handlers
 app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
-app.add_exception_handler(Exception, global_exception_handler)
 
 # Middleware order: security headers first, then logging, then CORS
 # (added in reverse since Starlette processes middleware in LIFO order)
@@ -345,6 +343,11 @@ async def predict_batch(request: Request, body: BatchPredictionRequest):
     Batch prediction for teachers (guru BK).
 
     Accepts array of students (max 50), returns array of predictions with summary stats.
+
+    NOTE: Known trade-off for hackathon -- students are processed sequentially
+    in a synchronous loop. For 50 students with the current small model this is
+    tolerable (~500ms total), but the event loop is blocked for the full
+    duration. In production, consider asyncio.to_thread or chunked processing.
     """
     results = []
 

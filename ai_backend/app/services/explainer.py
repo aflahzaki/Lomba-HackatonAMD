@@ -164,6 +164,11 @@ def explain_prediction(
     Generate SHAP explanation for a prediction.
 
     Returns dict with shap_values, base_value, prediction, explanation_text.
+
+    NOTE: Known trade-off for hackathon -- feature vector is reconstructed here
+    independently of predictor.predict(). If predictor feature engineering
+    changes (e.g., new features or normalization), this must be updated in sync.
+    A shared _build_features() helper would eliminate drift risk in production.
     """
     # Compute program features (same logic as predictor.predict)
     if program:

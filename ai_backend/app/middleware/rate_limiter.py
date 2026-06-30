@@ -6,6 +6,10 @@ from slowapi import Limiter
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 
+# NOTE: Known trade-off for hackathon -- get_remote_address resolves to the
+# reverse proxy (PHP container) IP in the docker-compose topology, so all users
+# share a single rate-limit bucket. In production, configure slowapi to use
+# X-Forwarded-For or X-Real-IP with trusted proxy settings.
 limiter = Limiter(key_func=get_remote_address)
 
 
