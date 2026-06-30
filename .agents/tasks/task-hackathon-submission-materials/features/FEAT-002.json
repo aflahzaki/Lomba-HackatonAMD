@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "docs",
   "description": "Address review findings: fix branch name in checklist, soften Fireworks AI AMD claims, trim video script Segment 5, move XAI image from Slide 5 to Slide 7",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Fix SUBMISSION_GUIDE.md checklist to reference `main` instead of the feature branch",
     "Soften Fireworks AI AMD hardware claims across all documents to note it is based on Fireworks AI's infrastructure details rather than stated as verified fact",
@@ -22,5 +22,5 @@
     "Verify Slide 5 does not reference xai_framework_comparison.png and Slide 7 does"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All four review issues addressed. Branch checklist now says to merge to main before submission. Fireworks AI claims softened across README, SUBMISSION_GUIDE, AMD_USAGE, VIDEO_SCRIPT, and SLIDE_OUTLINE. Video script Segment 5 trimmed from ~150 words to ~82 words (well within 45s at natural pace). XAI framework image moved from Slide 5 to Slide 7."
 }
