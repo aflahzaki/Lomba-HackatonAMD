@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Build the complete Python AI backend with ML model training, FastAPI endpoints, Fireworks AI advisor integration, and tests",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create ai_backend/ directory structure: app/__init__.py, app/main.py, app/models/__init__.py, app/models/predictor.py, app/services/__init__.py, app/services/advisor.py, app/services/recommender.py, app/schemas/__init__.py, app/schemas/prediction.py, app/config.py, training/, models/, tests/",
     "Create ai_backend/training/prepare_data.py - Parse database/seed_sidata.sql file directly (regex on INSERT statements) to extract all 3058 study programs with columns: kode_univ, kode_prodi, nama_prodi, jenjang, daya_tampung_2023, peminat_2018-2022, daya_tampung_2018-2022. Generate training features: competition_ratio (peminat/daya_tampung for each year), applicant_trend (growth rate), capacity_trend, absolute capacity. Save as CSV for training.",
@@ -34,5 +34,5 @@
     "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && timeout 10 uvicorn app.main:app --host 0.0.0.0 --port 8000 & sleep 3 && curl -s http://localhost:8000/api/health && kill %1"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 33 tests pass. Model achieves R2=0.9457 on test set. Python 3.9 works via python3 command (not python). pytest-asyncio version installed is 1.2.0 which uses mode=strict. XGBoost 2.1.4 installs cleanly. Training data generates 30580 samples from 3058 programs x 10 synthetic students. The model .joblib file is 864KB. FastAPI app starts and responds correctly on all endpoints. Pydantic v2 deprecation warning about class-based Config (cosmetic only). on_event deprecation warning from FastAPI (works fine, would need lifespan refactor for newer versions)."
 }
