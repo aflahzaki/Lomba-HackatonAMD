@@ -29,5 +29,5 @@
     "cd ai_backend && python -m pytest tests/ -v --tb=short"
   ],
   "blocked_reason": null,
-  "findings": "All 6 review issues fixed successfully. PHP syntax verified (php -l). JS syntax verified (node --check). All 109 backend tests pass. Dark mode now covers 21 CSS variables plus form inputs, cards, and code blocks. SHAP chart uses response.features and item.contribution. What-If uses fixed offset of 8 for deterministic results. Batch predict transforms field names to match Python schema. Advisor validates history array structure. Role guards follow the dashboard_guru.php pattern with require_role()."
+  "findings": "All 6 review issues fixed successfully. PHP syntax verified (php -l). JS syntax verified (node --check). All 109 backend tests pass. Dark mode now covers 21 CSS variables plus form inputs, cards, and code blocks. SHAP chart uses response.features and item.contribution. What-If uses fixed offset of 8 for deterministic results. Batch predict transforms field names to match Python schema. Advisor validates history array structure. Role guards follow the dashboard_guru.php pattern with require_role(). V2 review fixes applied: explain.php reads shap_values key, predictions.js SHAP canvas includes feature.feature in fallback chain, batch_predict.php re-attaches student names from input after AI response."
 }
