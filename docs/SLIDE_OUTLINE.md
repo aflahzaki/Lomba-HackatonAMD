@@ -106,7 +106,7 @@
          AI Backend (FastAPI/Python)
          /        |          \
   XGBoost    Fireworks AI   MySQL 8.0
-  (AMD GPU)  (AMD Hardware)  (3058 programs)
+  (AMD GPU)  (AMD GPU Infra)  (3058 programs)
   ```
 - **Tech Stack table:** PHP 8.2, Python 3.10, FastAPI, XGBoost, MySQL, Docker
 - **Deployment:** Docker Compose (3 services)
@@ -120,7 +120,6 @@
 
 ### Images
 - Architecture diagram (clean, professional)
-- `references_images/xai_framework_comparison.png` - XAI framework comparison
 
 ---
 
@@ -134,7 +133,7 @@
   - XGBoost GPU hist method via HIP compatibility
   - 5-10x speedup vs CPU training
 - **Inference:**
-  - Fireworks AI running on AMD hardware
+  - Fireworks AI, which leverages AMD GPU infrastructure
   - Llama 3.1 8B Instruct for AI Advisor
   - Low-latency LLM responses
 - **Code snippet:** `device="cuda"` (works with ROCm via HIP)
@@ -143,7 +142,7 @@
 - AMD is used throughout the entire AI pipeline
 - Training: ROCm enables XGBoost GPU acceleration seamlessly
 - The HIP compatibility layer means `device='cuda'` just works on AMD GPUs
-- Inference: Fireworks AI runs models on AMD hardware infrastructure
+- Inference: Fireworks AI leverages AMD GPU infrastructure for model serving
 - Auto-detection: script detects ROCm via /opt/rocm, HIP_VISIBLE_DEVICES, rocm-smi
 - Falls back gracefully to CPU when AMD GPU is not present
 - Reference `docs/AMD_USAGE.md` for full technical details
@@ -180,6 +179,7 @@
 - `ai_backend/training/evaluation_charts/actual_vs_predicted.png`
 - `ai_backend/training/evaluation_charts/prediction_distribution.png`
 - `ai_backend/training/evaluation_charts/residual_plot.png`
+- `references_images/xai_framework_comparison.png` - XAI framework comparison
 
 ---
 

@@ -144,13 +144,13 @@ LangkahKampus is an AI-powered SNBP (Seleksi Nasional Berdasarkan Prestasi)
 admission predictor for Indonesian high school students. It uses XGBoost ML 
 model trained on AMD Developer Cloud GPU (Instinct MI210) with ROCm for 
 accelerated training, achieving R2=0.9457. The AI Advisor feature leverages 
-Fireworks AI (Llama 3.1 8B) running on AMD hardware for real-time academic 
+Fireworks AI (Llama 3.1 8B), which leverages AMD GPU infrastructure, for real-time academic 
 guidance. The platform covers 3,058 programs across 84 universities.
 
 Key AMD Platform Usage:
 - Model training on AMD Instinct MI210/MI250X via ROCm
 - XGBoost GPU hist acceleration (5-10x speedup)
-- LLM inference via Fireworks AI on AMD hardware
+- LLM inference via Fireworks AI, which leverages AMD GPU infrastructure
 - Full ROCm/HIP compatibility for GPU workloads
 ```
 
@@ -169,7 +169,7 @@ Pastikan form submission menjelaskan dengan detail bagaimana AMD platform diguna
 - [ ] `.env.example` ada (tanpa API key actual)
 - [ ] Tidak ada API key atau secret yang ter-commit
 - [ ] Semua file yang diperlukan ter-commit
-- [ ] Branch utama (`feat/ai-backend-integration`) clean dan buildable
+- [ ] Code merged to `main` branch (merge `feat/ai-backend-integration` before submission) and buildable
 - [ ] License/attribution jelas
 
 ### Dokumentasi

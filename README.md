@@ -72,13 +72,13 @@ model = XGBRegressor(
 - **Hardware:** Support MI210 (64GB) dan MI250X (128GB, 3.2 TB/s bandwidth)
 - **Compatibility:** `device="cuda"` bekerja di AMD GPU melalui HIP compatibility layer
 
-### LLM Inference via Fireworks AI (AMD Hardware)
+### LLM Inference via Fireworks AI (AMD GPU Infrastructure)
 
-AI Advisor menggunakan **Fireworks AI** yang berjalan di hardware AMD untuk inference model **Llama 3.1 8B Instruct**:
+AI Advisor menggunakan **Fireworks AI**, yang memanfaatkan infrastruktur GPU AMD untuk inference model **Llama 3.1 8B Instruct**:
 
 - Real-time academic guidance chatbot
 - Multi-turn conversation dengan context dari hasil prediksi
-- Low-latency responses dari AMD-powered infrastructure
+- Low-latency responses dari Fireworks AI infrastructure
 
 ### Model Performance (Trained on AMD)
 

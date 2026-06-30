@@ -95,7 +95,7 @@ Detailed script for the 3-5 minute demo video submission. The video should be re
 - Show multi-turn response with context awareness
 
 ### Narration
-> "LangkahKampus also features an AI Advisor powered by Fireworks AI running Llama 3.1 on AMD hardware."
+> "LangkahKampus also features an AI Advisor powered by Fireworks AI, which leverages AMD GPU infrastructure, running Llama 3.1."
 >
 > "Students can ask questions in natural language - here I'm asking for an explanation of my prediction results and advice."
 >
@@ -126,13 +126,11 @@ Detailed script for the 3-5 minute demo video submission. The video should be re
 ### Narration
 > "Now let me show how we leverage AMD platforms. Our XGBoost model is trained on AMD Developer Cloud using Instinct MI210 GPUs with ROCm."
 >
-> "The training script automatically detects the ROCm platform through multiple methods - checking for /opt/rocm, HIP environment variables, and rocm-smi. When an AMD GPU is detected, it uses the GPU-accelerated histogram method."
+> "The training script auto-detects ROCm and uses the GPU-accelerated histogram method. XGBoost's device='cuda' parameter works seamlessly on AMD GPUs through HIP, giving us 5 to 10x training speedup."
 >
-> "XGBoost's device='cuda' parameter works seamlessly with AMD GPUs through the HIP compatibility layer. This gives us 5 to 10x training speedup on the MI250X with 128GB HBM2e memory."
+> "For LLM inference, Fireworks AI leverages AMD GPU infrastructure for fast AI advisor responses."
 >
-> "For LLM inference, we use Fireworks AI which runs on AMD hardware, providing fast and cost-effective AI responses for our advisor feature."
->
-> "Here are our model evaluation results - R-squared of 0.9457, showing excellent prediction accuracy. The feature importance chart shows which variables the model relies on most."
+> "Here are our evaluation results - R-squared of 0.9457, showing excellent prediction accuracy."
 
 ### Notes
 - Scroll slowly through the training script
@@ -159,7 +157,7 @@ Detailed script for the 3-5 minute demo video submission. The video should be re
 ### Narration
 > "The architecture is a three-tier system containerized with Docker Compose. The PHP frontend communicates with our FastAPI Python backend which hosts the ML model and integrates with Fireworks AI."
 >
-> "The database contains real SIDATA data - 3,058 programs from 84 Indonesian universities. Our ML pipeline compared multiple models before selecting XGBoost for its superior performance and GPU acceleration capabilities on AMD hardware."
+> "The database contains real SIDATA data - 3,058 programs from 84 Indonesian universities. Our ML pipeline compared multiple models before selecting XGBoost for its superior performance and GPU acceleration capabilities on AMD."
 >
 > "The entire stack deploys with a single docker compose up command."
 
@@ -185,7 +183,7 @@ Detailed script for the 3-5 minute demo video submission. The video should be re
 ### Narration
 > "LangkahKampus demonstrates how AMD's GPU computing platform can power real-world AI applications that make a social impact."
 >
-> "With AMD Instinct GPUs and ROCm, we achieve fast model training. With Fireworks AI on AMD hardware, we deliver real-time LLM-powered guidance. Together, they create an accessible tool that helps millions of Indonesian students make informed university choices."
+> "With AMD Instinct GPUs and ROCm, we achieve fast model training. With Fireworks AI leveraging AMD GPU infrastructure, we deliver real-time LLM-powered guidance. Together, they create an accessible tool that helps millions of Indonesian students make informed university choices."
 >
 > "Thank you for watching. The full source code is available on GitHub. We believe AI on AMD can transform education accessibility in Indonesia and beyond."
 

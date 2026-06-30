@@ -7,7 +7,7 @@ This document provides a comprehensive technical overview of how AMD platforms a
 ## Table of Contents
 
 1. [AMD Developer Cloud for Training](#1-amd-developer-cloud-for-training)
-2. [Fireworks AI on AMD Hardware for Inference](#2-fireworks-ai-on-amd-hardware-for-inference)
+2. [Fireworks AI on AMD GPU Infrastructure for Inference](#2-fireworks-ai-on-amd-gpu-infrastructure-for-inference)
 3. [ROCm Compatibility Details](#3-rocm-compatibility-details)
 4. [Deployment Considerations](#4-deployment-considerations)
 
@@ -102,11 +102,11 @@ Evaluation visualizations generated after training:
 
 ---
 
-## 2. Fireworks AI on AMD Hardware for Inference
+## 2. Fireworks AI on AMD GPU Infrastructure for Inference
 
 ### Overview
 
-The AI Advisor feature uses Fireworks AI platform for LLM inference. Fireworks AI runs model inference on AMD hardware, providing fast and cost-effective AI responses.
+The AI Advisor feature uses Fireworks AI platform for LLM inference. Fireworks AI leverages AMD GPU infrastructure for model inference, providing fast and cost-effective AI responses.
 
 ### Integration Architecture
 
@@ -117,9 +117,9 @@ User Message
 FastAPI Backend (ai_backend/app/services/advisor.py)
     |
     v
-Fireworks AI API (AMD hardware infrastructure)
+Fireworks AI API (leverages AMD GPU infrastructure)
     |  Model: Llama 3.1 8B Instruct
-    |  Hardware: AMD GPUs for inference
+    |  Infrastructure: AMD GPUs for inference
     v
 AI Response (streamed back to user)
 ```
@@ -289,7 +289,7 @@ The trained model (`.joblib` file) is bundled in the Docker image. GPU is not re
 For maximum AMD utilization:
 
 1. **Train** on AMD Developer Cloud (MI210/MI250X + ROCm)
-2. **Serve LLM** via Fireworks AI (AMD hardware backend)
+2. **Serve LLM** via Fireworks AI (leverages AMD GPU infrastructure)
 3. **Deploy app** on AMD EPYC-based servers (optional)
 
 ### Scaling Considerations
@@ -350,7 +350,7 @@ LangkahKampus demonstrates comprehensive AMD platform utilization:
 |-------|---------------|---------|
 | **Training** | AMD Instinct MI210/MI250X + ROCm | GPU-accelerated XGBoost model training |
 | **Inference (ML)** | CPU (model is lightweight) | Fast prediction serving |
-| **Inference (LLM)** | Fireworks AI on AMD hardware | AI Advisor chatbot |
+| **Inference (LLM)** | Fireworks AI (AMD GPU infrastructure) | AI Advisor chatbot |
 | **Compatibility** | HIP compatibility layer | Seamless CUDA-to-AMD GPU execution |
 
 The project showcases how AMD's GPU computing ecosystem (ROCm + HIP) combined with AMD-powered inference services (Fireworks AI) can deliver production-grade AI applications with real social impact.
