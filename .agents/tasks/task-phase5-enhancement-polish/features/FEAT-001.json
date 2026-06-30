@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "AMD GPU Training Enhancement + Model Evaluation Visualization + Improved Multi-turn Advisor + Landing Page AMD Section + Demo Script",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "1. Create ai_backend/training/train_on_amd_cloud.py - AMD GPU/ROCm training script that: (a) detects ROCm/AMD GPU availability via environment checks (checking for /opt/rocm, HIP_VISIBLE_DEVICES, rocm-smi), (b) if ROCm available, uses XGBoost GPU hist tree_method with gpu_id parameter, (c) if not available, falls back gracefully to CPU training with informational messages, (d) includes detailed comments and print statements explaining AMD Developer Cloud GPU usage, (e) has a section showing how to configure for AMD Instinct MI210/MI250 GPUs, (f) logs timing comparison CPU vs GPU, (g) saves model to same location as train_model.py",
     "2. Create ai_backend/training/visualize_evaluation.py - Script that generates evaluation charts as PNG files: (a) feature importance horizontal bar chart, (b) prediction vs actual scatter plot (regression equivalent of confusion matrix), (c) prediction distribution histogram (actual vs predicted overlaid), (d) residual plot, (e) saves all figures to ai_backend/training/evaluation_charts/ directory, (f) uses matplotlib and seaborn for publication-quality plots, (g) includes LangkahKampus branding in chart titles",
@@ -32,5 +32,5 @@
     "cd /projects/sandbox/Lomba-HackatonAMD && python demo/demo_script.py --mock"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 47 tests pass (including 3 new history tests). train_on_amd_cloud.py runs on CPU with graceful fallback. visualize_evaluation.py generates 4 PNG charts. demo_script.py runs in mock mode. pyenv global 3.12.13 needed for python command. XGBoost model retrained with same R2=0.9457."
 }
