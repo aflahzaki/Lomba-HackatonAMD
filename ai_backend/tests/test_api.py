@@ -155,6 +155,20 @@ class TestPredictEndpoint:
         response = client.post("/api/predict", json=payload)
         assert response.status_code == 422
 
+    def test_predict_invalid_score_value(self, client):
+        """Should return 422 for non-numeric score values."""
+        payload = {
+            "scores": {"Math": {"s1": "abc"}},
+            "school_ranking": 10,
+            "total_students": 100,
+            "school_accreditation": "B",
+            "target_program_id": "TEKNIK SIPIL",
+        }
+        response = client.post("/api/predict", json=payload)
+        assert response.status_code == 422
+        data = response.json()
+        assert "Invalid score value" in data["detail"]
+
 
 class TestRecommendEndpoint:
     """Test POST /api/recommend."""

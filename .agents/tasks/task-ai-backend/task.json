@@ -1,7 +1,22 @@
 {
   "task_id": "task-ai-backend",
   "task_description": "Build a Python AI backend for LangkahKampus university admission predictor. Includes ML model training (XGBoost), FastAPI endpoints for prediction/recommendation/AI advisor, Fireworks AI integration for LLM-based explanations, Docker containerization with docker-compose orchestrating PHP frontend + Python backend + MySQL, and PHP integration layer with fallback to deterministic formula.",
-  "status": "in_progress",
+  "status": "completed",
   "feature_order": ["FEAT-001", "FEAT-002"],
-  "blocked_reason": null
+  "blocked_reason": null,
+  "verification": {
+    "build": "pass",
+    "tests": "pass",
+    "test_quality": "pass",
+    "docker_build": "pass",
+    "summary": "All 34 pytest tests pass (including new invalid score test). Both Docker images build successfully with project-root context. Review fixes applied: (1) SIDATA SQL now COPYed into container and volume-mounted at runtime, (2) CORS allow_credentials set to False, (3) ai-backend ports removed from docker-compose (internal only), (4) score validation with proper 422 errors, (5) circular training signal documented in train_model.py, (6) advisor message sanitization added."
+  },
+  "review_fixes_applied": [
+    "SIDATA SQL available in container via COPY and volume mount; config.py path resolution works in both contexts",
+    "CORS allow_credentials=False (PHP uses server-side cURL, not browser CORS)",
+    "Removed ports mapping for ai-backend (only accessible via internal Docker network)",
+    "Added try/except for float() score parsing returning 422 on invalid values",
+    "Added documentation comment in train_model.py about circular training limitation",
+    "Added message sanitization in advisor.py (truncation + injection pattern filtering)"
+  ]
 }

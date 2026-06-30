@@ -24,14 +24,14 @@ services:
 
   ai-backend:
     build:
-      context: ./ai_backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+      context: .
+      dockerfile: ai_backend/Dockerfile
     environment:
       - FIREWORKS_API_KEY=${FIREWORKS_API_KEY:-}
       - HOST=0.0.0.0
       - PORT=8000
+    volumes:
+      - ./database/seed_sidata.sql:/database/seed_sidata.sql:ro
     networks:
       - langkahkampus-net
 

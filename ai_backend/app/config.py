@@ -21,11 +21,16 @@ class Settings(BaseSettings):
         "prediction_model.joblib",
     )
 
-    # SIDATA SQL path
-    SIDATA_SQL_PATH: str = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-        "database",
-        "seed_sidata.sql",
+    # SIDATA SQL path - works both in-container (/database/seed_sidata.sql)
+    # and on host (relative to project root)
+    SIDATA_SQL_PATH: str = (
+        "/database/seed_sidata.sql"
+        if os.path.exists("/database/seed_sidata.sql")
+        else os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+            "database",
+            "seed_sidata.sql",
+        )
     )
 
     # Server

@@ -27,10 +27,13 @@ app = FastAPI(
 )
 
 # CORS middleware
+# Note: allow_credentials=False because the PHP frontend communicates via
+# server-side cURL (not browser CORS requests). allow_origins=["*"] with
+# allow_credentials=True is invalid per the CORS spec.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -67,19 +70,25 @@ async def predict(request: PredictionRequest):
     total_score = 0.0
     score_count = 0
 
-    for subject, semesters in request.scores.items():
-        if isinstance(semesters, dict):
-            for sem, score in semesters.items():
-                val = float(score)
+    try:
+        for subject, semesters in request.scores.items():
+            if isinstance(semesters, dict):
+                for sem, score in semesters.items():
+                    val = float(score)
+                    if val > 0:
+                        total_score += val
+                        score_count += 1
+            else:
+                # Handle case where scores is flat {subject: score}
+                val = float(semesters)
                 if val > 0:
                     total_score += val
                     score_count += 1
-        else:
-            # Handle case where scores is flat {subject: score}
-            val = float(semesters)
-            if val > 0:
-                total_score += val
-                score_count += 1
+    except (ValueError, TypeError) as e:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid score value: all scores must be numeric. Error: {str(e)}",
+        )
 
     avg_score = total_score / score_count if score_count > 0 else 75.0
     ranking_percentile = request.school_ranking / request.total_students
@@ -143,18 +152,24 @@ async def recommend(request: RecommendRequest):
     total_score = 0.0
     score_count = 0
 
-    for subject, semesters in request.scores.items():
-        if isinstance(semesters, dict):
-            for sem, score in semesters.items():
-                val = float(score)
+    try:
+        for subject, semesters in request.scores.items():
+            if isinstance(semesters, dict):
+                for sem, score in semesters.items():
+                    val = float(score)
+                    if val > 0:
+                        total_score += val
+                        score_count += 1
+            else:
+                val = float(semesters)
                 if val > 0:
                     total_score += val
                     score_count += 1
-        else:
-            val = float(semesters)
-            if val > 0:
-                total_score += val
-                score_count += 1
+    except (ValueError, TypeError) as e:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Invalid score value: all scores must be numeric. Error: {str(e)}",
+        )
 
     avg_score = total_score / score_count if score_count > 0 else 75.0
     ranking_percentile = request.school_ranking / request.total_students

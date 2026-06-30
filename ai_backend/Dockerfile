@@ -8,12 +8,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-COPY requirements.txt .
+COPY ai_backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY app/ ./app/
-COPY models/ ./models/
+COPY ai_backend/app/ ./app/
+COPY ai_backend/models/ ./models/
+
+# Copy SIDATA SQL file into the container as fallback
+# (volume mount in docker-compose is preferred at runtime)
+COPY database/seed_sidata.sql /database/seed_sidata.sql
 
 # Expose port
 EXPOSE 8000

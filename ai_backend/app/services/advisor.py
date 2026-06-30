@@ -1,10 +1,25 @@
 """Fireworks AI integration for SNBP advisor chatbot."""
 
+import re
 from typing import Any, Dict, List, Optional
 
 import httpx
 
 from ..config import settings
+
+
+# Maximum allowed message length (characters)
+MAX_MESSAGE_LENGTH = 2000
+
+# Patterns that may indicate prompt injection attempts
+INJECTION_PATTERNS = [
+    r"(?i)ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?)",
+    r"(?i)you\s+are\s+now\s+",
+    r"(?i)system\s*:\s*",
+    r"(?i)new\s+instructions?\s*:",
+    r"(?i)forget\s+(everything|all|your\s+instructions)",
+    r"(?i)disregard\s+(all\s+)?(previous|prior|above)",
+]
 
 
 SYSTEM_PROMPT = """Kamu adalah penasihat akademik AI untuk LangkahKampus, platform prediksi penerimaan SNBP (Seleksi Nasional Berdasarkan Prestasi) di Indonesia.
@@ -30,6 +45,24 @@ Konteks SNBP:
 """
 
 
+def _sanitize_message(message: str) -> str:
+    """
+    Sanitize user message to mitigate basic prompt injection attacks.
+
+    - Truncates messages that exceed MAX_MESSAGE_LENGTH
+    - Strips patterns that attempt to override system prompt
+    """
+    # Truncate overly long messages
+    if len(message) > MAX_MESSAGE_LENGTH:
+        message = message[:MAX_MESSAGE_LENGTH] + "..."
+
+    # Remove potential prompt injection patterns
+    for pattern in INJECTION_PATTERNS:
+        message = re.sub(pattern, "[filtered]", message)
+
+    return message.strip()
+
+
 async def get_advisor_response(
     message: str,
     context: Optional[Dict[str, Any]] = None,
@@ -39,6 +72,9 @@ async def get_advisor_response(
 
     Returns dict with 'reply' and 'suggestions' keys.
     """
+    # Sanitize user message to mitigate prompt injection
+    message = _sanitize_message(message)
+
     if not settings.FIREWORKS_API_KEY:
         return _fallback_response(message, context)
 
