@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Docker containerization and PHP integration - Dockerfiles, docker-compose, PHP proxy to Python backend with fallback, AI advisor page",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create ai_backend/Dockerfile - Python 3.10-slim base, copy requirements.txt and install deps, copy app/ and models/ directories, expose port 8000, CMD uvicorn app.main:app --host 0.0.0.0 --port 8000",
     "Create Dockerfile.php in project root - php:8.2-apache base, enable mod_rewrite, copy website/ to /var/www/html/, configure Apache ServerName, expose port 80",
@@ -29,5 +29,5 @@
     "Verify all required files exist: ls -la docker-compose.yml Dockerfile.php ai_backend/Dockerfile .env.example README.md website/api/advisor.php website/pages/advisor.php website/config/ai_backend.php"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "Both Dockerfiles build successfully (verified with docker build). MySQL 8.0 image pulls successfully. docker-compose.yml validated as valid YAML. PHP syntax check passes for all new and modified files. docker-compose CLI was not pre-installed in the environment (podman-based Docker without compose plugin), so individual docker build commands were used to verify container builds. The docker-compose.yml file is correctly structured and will work when docker compose is available. PHP env var support added to database.php for Docker compatibility (getenv with fallback). predict.php properly tries AI backend first and falls back to deterministic formula on failure."
 }
