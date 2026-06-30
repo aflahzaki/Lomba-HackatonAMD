@@ -41,7 +41,7 @@ if ($response !== null) {
     http_response_code(200);
     echo json_encode([
         'success' => true,
-        'features' => $response['features'] ?? [],
+        'features' => $response['shap_values'] ?? $response['features'] ?? [],
         'base_value' => $response['base_value'] ?? 0.5,
         'prediction' => $response['prediction'] ?? 0,
         'source' => 'ai'

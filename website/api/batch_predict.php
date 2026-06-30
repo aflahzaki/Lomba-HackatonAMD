@@ -55,11 +55,18 @@ $payload = [
 // Call AI Backend
 $response = callAIBackend('/api/predict/batch', $payload);
 
-if ($response !== null) {
+if ($response !== null && isset($response['results'])) {
+    // Re-attach student names from original input since PredictionResponse has no nama field
+    $results = $response['results'];
+    foreach ($results as $i => &$result) {
+        $result['nama'] = $input['students'][$i]['nama'] ?? 'Unknown';
+    }
+    unset($result); // break reference
+
     http_response_code(200);
     echo json_encode([
         'success' => true,
-        'results' => $response['results'] ?? [],
+        'results' => $results,
         'total' => $response['total'] ?? count($input['students']),
         'source' => 'ai'
     ]);

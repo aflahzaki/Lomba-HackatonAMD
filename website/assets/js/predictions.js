@@ -574,7 +574,7 @@ function displayShapExplanation(formData) {
             ctx.font = '12px Inter, sans-serif';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
-            ctx.fillText(feature.feature_name || feature.name || 'Feature', padding.left - 8, y + barHeight / 2);
+            ctx.fillText(feature.feature_name || feature.feature || feature.name || 'Feature', padding.left - 8, y + barHeight / 2);
 
             // Draw value text
             ctx.fillStyle = val >= 0 ? '#27AE60' : '#C0392B';
