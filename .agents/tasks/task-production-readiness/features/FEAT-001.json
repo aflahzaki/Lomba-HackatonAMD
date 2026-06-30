@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "feat",
   "description": "Add production-readiness middleware and infrastructure: rate limiting (slowapi), structured JSON logging with request/response timing, security headers middleware, global exception handler with graceful degradation, and monitoring/metrics endpoint.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Add slowapi and python-json-logger to ai_backend/requirements.txt",
     "Create ai_backend/app/middleware/__init__.py package",
@@ -30,5 +30,5 @@
     "All tests pass including new tests for metrics, security headers, error handling"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "slowapi requires the Request parameter to be named 'request' (starlette.requests.Request), so endpoint functions were refactored to use 'body' for Pydantic models. Exception handling is implemented inside StructuredLoggingMiddleware (try/except in dispatch) because Starlette BaseHTTPMiddleware re-raises exceptions from call_next before app-level exception handlers can catch them. RateLimitExceeded constructor requires a Limit object not a detail string. All 47 original + 25 new tests pass (72 total)."
 }
