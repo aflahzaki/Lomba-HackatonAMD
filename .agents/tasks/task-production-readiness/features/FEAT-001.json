@@ -1,0 +1,34 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Add production-readiness middleware and infrastructure: rate limiting (slowapi), structured JSON logging with request/response timing, security headers middleware, global exception handler with graceful degradation, and monitoring/metrics endpoint.",
+  "status": "in_progress",
+  "steps": [
+    "Add slowapi and python-json-logger to ai_backend/requirements.txt",
+    "Create ai_backend/app/middleware/__init__.py package",
+    "Create ai_backend/app/middleware/logging.py - Implement structured JSON logging middleware that logs each request method, path, status code, and response time in milliseconds. Use Python's standard logging module with a JSON formatter.",
+    "Create ai_backend/app/middleware/security.py - Add security headers middleware that adds X-Content-Type-Options: nosniff, X-Frame-Options: DENY, X-XSS-Protection: 1; mode=block, Content-Security-Policy: default-src 'self' to every response.",
+    "Create ai_backend/app/middleware/rate_limiter.py - Implement rate limiting using slowapi with limits: 30/minute for /api/predict, /api/explain, /api/what-if, /api/predict/batch; 10/minute for /api/advisor; 60/minute for other endpoints. Include a custom rate limit exceeded handler that returns JSON error.",
+    "Create ai_backend/app/middleware/error_handler.py - Implement a global exception handler that catches all unhandled exceptions and returns a consistent JSON error response {success: false, error: str, detail: str, timestamp: str}. If ML model fails during prediction, return a fallback deterministic prediction instead of 500.",
+    "Create ai_backend/app/middleware/metrics.py - Implement an in-memory metrics collector that tracks: total_predictions, total_requests, avg_response_time_ms, model_version, uptime_seconds, popular_programs (top 5 by request count), endpoint_stats (hits per endpoint).",
+    "Add GET /api/metrics endpoint in ai_backend/app/main.py that returns the collected metrics as JSON.",
+    "Wire all middleware into ai_backend/app/main.py in the correct order: security headers first, then logging, then rate limiting. Update the startup event to initialize metrics. Keep existing CORS middleware.",
+    "Add OpenAPI metadata enhancements to ai_backend/app/main.py: add tags_metadata list with descriptions for each tag group (Prediction, Recommendation, Advisor, Monitoring, Explainability), add contact/license info to FastAPI constructor, add response_model and openapi_extra examples to existing endpoints.",
+    "Update ai_backend/Dockerfile to install new dependencies from updated requirements.txt"
+  ],
+  "acceptance_criteria": [
+    "All 47 existing tests still pass",
+    "GET /api/metrics returns JSON with total_predictions, avg_response_time_ms, model_version, uptime_seconds fields",
+    "Every response includes X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Content-Security-Policy headers",
+    "Rate limiting returns 429 status with JSON error body when limit exceeded",
+    "Unhandled exceptions return consistent JSON error format with 500 status",
+    "Structured log output includes request method, path, status_code, response_time_ms fields",
+    "OpenAPI docs at /docs show professional tags, descriptions, and examples"
+  ],
+  "verification": [
+    "Run: cd /projects/sandbox/Lomba-HackatonAMD && python -m pytest ai_backend/tests/ -v",
+    "All tests pass including new tests for metrics, security headers, error handling"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

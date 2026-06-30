@@ -1,0 +1,35 @@
+{
+  "project_type": "Python FastAPI AI backend for SNBP admission prediction (part of a multi-service Docker Compose app)",
+  "language": "Python 3.10+",
+  "build_system": "pip with requirements.txt, Docker/Docker Compose",
+  "test_framework": "pytest with TestClient from FastAPI, tests in ai_backend/tests/",
+  "build_command": "cd /projects/sandbox/Lomba-HackatonAMD && pip install -r ai_backend/requirements.txt",
+  "test_command": "cd /projects/sandbox/Lomba-HackatonAMD && python -m pytest ai_backend/tests/ -v",
+  "verification_instructions": "Run pytest with verbose output, all tests must pass including new ones",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "pip install dependencies from ai_backend/requirements.txt",
+  "environment_constraints": "INTEGRATIONS_ONLY network - cannot pip install new packages from PyPI. Must work with pre-installed packages or add them to requirements.txt for Docker build context only. Use AST-level validation and existing test infrastructure.",
+  "contribution_requirements": "Keep all 47 existing tests passing. Add new tests for new endpoints. Don't break existing endpoint signatures.",
+  "key_patterns": {
+    "app_structure": "FastAPI app in ai_backend/app/main.py, models in app/models/, schemas in app/schemas/, services in app/services/",
+    "predictor_pattern": "Global singleton `predictor` in app/models/predictor.py with predict() method returning (prob, lower, upper) tuple",
+    "schema_pattern": "Pydantic BaseModel classes in app/schemas/prediction.py with Field validators",
+    "test_pattern": "pytest with TestClient, module-scoped fixtures for predictor setup, class-based test organization",
+    "startup": "on_event('startup') loads SIDATA and ML model",
+    "feature_cols": "FEATURE_COLS = [avg_score, ranking_percentile, accred_score, competition_ratio, applicant_trend, daya_tampung]"
+  },
+  "relevant_files": [
+    "ai_backend/app/main.py",
+    "ai_backend/app/config.py",
+    "ai_backend/app/models/predictor.py",
+    "ai_backend/app/schemas/prediction.py",
+    "ai_backend/app/services/advisor.py",
+    "ai_backend/app/services/recommender.py",
+    "ai_backend/tests/test_api.py",
+    "ai_backend/tests/test_predictor.py",
+    "ai_backend/requirements.txt",
+    "ai_backend/Dockerfile",
+    "docker-compose.yml"
+  ],
+  "directory_structure": "ai_backend/app/ (FastAPI app), ai_backend/models/ (joblib model), ai_backend/tests/ (pytest), ai_backend/training/ (training scripts), database/ (SQL seeds), website/ (PHP frontend), docker-compose.yml (orchestration)"
+}
