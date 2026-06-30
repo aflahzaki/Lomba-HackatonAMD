@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Address semantic review findings: fix history truncation direction, reset history on context change, align client/server limits, and use test set for visualization",
+  "status": "in_progress",
+  "steps": [
+    "1. In ai_backend/app/services/advisor.py: change history[:MAX_HISTORY_ENTRIES] to history[-MAX_HISTORY_ENTRIES:] and set MAX_HISTORY_ENTRIES = 20 to match client",
+    "2. In website/assets/js/advisor.js: track the last prediction context and reset conversationHistory when it changes",
+    "3. In ai_backend/training/visualize_evaluation.py: use train_test_split (80/20, random_state=42) and evaluate on test set only, update chart titles to indicate 'Test Set'"
+  ],
+  "acceptance_criteria": [
+    "Server keeps newest history entries (slices from end)",
+    "MAX_HISTORY_ENTRIES in Python matches the 20-message client limit",
+    "conversationHistory resets when predictionContext changes",
+    "Visualization uses a held-out test set (80/20 split, random_state=42)",
+    "Chart titles indicate Test Set evaluation",
+    "All existing tests still pass"
+  ],
+  "verification": [
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && python -m pytest tests/ -v",
+    "cd /projects/sandbox/Lomba-HackatonAMD/ai_backend && python training/visualize_evaluation.py"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}

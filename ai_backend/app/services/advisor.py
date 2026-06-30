@@ -73,8 +73,8 @@ def _sanitize_message(message: str) -> str:
     return message.strip()
 
 
-# Maximum number of history entries allowed
-MAX_HISTORY_ENTRIES = 10
+# Maximum number of history entries allowed (matches client-side limit of 20 messages)
+MAX_HISTORY_ENTRIES = 20
 
 
 async def get_advisor_response(
@@ -93,7 +93,7 @@ async def get_advisor_response(
     # Validate and sanitize conversation history
     validated_history = []
     if history:
-        for entry in history[:MAX_HISTORY_ENTRIES]:
+        for entry in history[-MAX_HISTORY_ENTRIES:]:
             if isinstance(entry, dict):
                 role = entry.get("role", "")
                 content = entry.get("content", "")

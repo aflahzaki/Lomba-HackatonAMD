@@ -5,6 +5,8 @@
 
 // Conversation history for multi-turn chat (max 10 exchanges)
 var conversationHistory = [];
+// Track the last prediction context to detect changes
+var lastPredictionContextKey = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     initChatForm();
@@ -61,6 +63,13 @@ function sendMessage(message) {
             // Ignore invalid stored data
         }
     }
+
+    // Reset conversation history if the prediction context has changed
+    var currentContextKey = predictionContext || '';
+    if (lastPredictionContextKey !== null && currentContextKey !== lastPredictionContextKey) {
+        conversationHistory = [];
+    }
+    lastPredictionContextKey = currentContextKey;
 
     // Include conversation history (limit to last 10 exchanges = 20 messages)
     if (conversationHistory.length > 0) {

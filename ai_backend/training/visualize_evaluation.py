@@ -25,6 +25,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
 
 # Paths
 TRAINING_DATA_PATH = os.path.join(
@@ -146,7 +147,7 @@ def plot_actual_vs_predicted(y_actual, y_predicted, output_path):
     ax.set_xlabel("Actual Probability (%)")
     ax.set_ylabel("Predicted Probability (%)")
     ax.set_title(
-        f"LangkahKampus - Actual vs Predicted\n"
+        f"LangkahKampus - Actual vs Predicted (Test Set)\n"
         f"R2 = {r2:.4f} | MAE = {mae:.2f}%"
     )
     ax.legend(loc="upper left")
@@ -183,7 +184,7 @@ def plot_prediction_distribution(y_actual, y_predicted, output_path):
 
     ax.set_xlabel("Probability (%)")
     ax.set_ylabel("Count")
-    ax.set_title("LangkahKampus - Prediction Distribution\n(Actual vs Predicted)")
+    ax.set_title("LangkahKampus - Prediction Distribution (Test Set)\n(Actual vs Predicted)")
     ax.legend()
 
     plt.tight_layout()
@@ -216,7 +217,7 @@ def plot_residuals(y_actual, y_predicted, output_path):
 
     ax.set_xlabel("Predicted Probability (%)")
     ax.set_ylabel("Residual (Actual - Predicted) (%)")
-    ax.set_title("LangkahKampus - Residual Plot\n(Model Error Analysis)")
+    ax.set_title("LangkahKampus - Residual Plot (Test Set)\n(Model Error Analysis)")
     ax.legend()
 
     plt.tight_layout()
@@ -251,8 +252,14 @@ def main():
     X = df[FEATURE_COLS].values
     y = df[TARGET_COL].values
 
-    # Generate predictions
-    y_pred = np.clip(model.predict(X), 0.05, 0.95)
+    # Use a held-out test set (80/20 split) for honest evaluation
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    print(f"Train/Test split: {len(X_train)} train, {len(X_test)} test samples")
+
+    # Generate predictions on the TEST set only
+    y_pred = np.clip(model.predict(X_test), 0.05, 0.95)
 
     # Setup output directory
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -270,17 +277,17 @@ def main():
     )
 
     plot_actual_vs_predicted(
-        y, y_pred,
+        y_test, y_pred,
         os.path.join(OUTPUT_DIR, "actual_vs_predicted.png"),
     )
 
     plot_prediction_distribution(
-        y, y_pred,
+        y_test, y_pred,
         os.path.join(OUTPUT_DIR, "prediction_distribution.png"),
     )
 
     plot_residuals(
-        y, y_pred,
+        y_test, y_pred,
         os.path.join(OUTPUT_DIR, "residual_plot.png"),
     )
 
