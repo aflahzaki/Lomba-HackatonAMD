@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Add advanced AI/ML endpoints: SHAP model explainability (POST /api/explain), batch prediction (POST /api/predict/batch), and what-if analysis (POST /api/what-if). These demonstrate AI innovation and scalability to hackathon judges.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Add shap to ai_backend/requirements.txt",
     "Add new Pydantic schemas to ai_backend/app/schemas/prediction.py: ExplainRequest (same fields as PredictionRequest), ExplainResponse (shap_values list with feature name/value/contribution, base_value, prediction, explanation_text), BatchPredictionRequest (students: List[PredictionRequest], max 50), BatchPredictionResponse (results: List[PredictionResponse], summary stats), WhatIfRequest (base prediction fields + variable_to_change: str + new_value: float), WhatIfResponse (original_probability, new_probability, change, variable_changed, insight text).",
@@ -26,5 +26,5 @@
     "All tests pass including new tests for explain, batch, and what-if endpoints"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 109 tests pass (72 existing + 37 new). SHAP TreeExplainer works with the loaded XGBoost model. Fallback to feature-importance-based pseudo-SHAP values works when SHAP fails. Batch endpoint validates max 50 and min 1 students via Pydantic field_validator. What-if endpoint validates variable_to_change against allowed list and casts new_value appropriately. Insight messages are generated in Indonesian. Metrics collector tracks total_explanations, total_batch_requests, and total_what_if."
 }
