@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "fix",
   "description": "Address v2 review findings: sanitization tests, context dict injection, 422 error format, Indonesian injection patterns",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Add Indonesian injection patterns to INJECTION_PATTERNS in advisor.py",
     "Apply sanitization/length limits to context-derived content in advisor.py",
@@ -20,5 +20,5 @@
     "python3 -m pytest ai_backend/tests/ -v"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 44 tests pass (10 new sanitization tests + 34 existing). No pre-existing test failures. The context validation properly handles malformed input (non-numeric probability, non-dict summary, non-list variables). Indonesian patterns use regex with word boundaries via \\s+ which catches common injection phrasing."
 }
