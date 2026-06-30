@@ -492,7 +492,7 @@ function displayShapExplanation(formData) {
     if (!section) return;
 
     ajaxRequest('../api/explain.php', 'POST', formData, function(error, response) {
-        if (error || !response || !response.explanation) {
+        if (error || !response || !response.features) {
             return;
         }
 
@@ -503,13 +503,13 @@ function displayShapExplanation(formData) {
         if (!canvas) return;
 
         var ctx = canvas.getContext('2d');
-        var features = response.explanation || [];
+        var features = response.features || [];
 
         if (features.length === 0) return;
 
-        // Sort by absolute SHAP value descending
+        // Sort by absolute contribution value descending
         features.sort(function(a, b) {
-            return Math.abs(b.shap_value) - Math.abs(a.shap_value);
+            return Math.abs(b.contribution) - Math.abs(a.contribution);
         });
 
         // Limit to top 8 features
@@ -536,14 +536,18 @@ function displayShapExplanation(formData) {
         // Find max absolute value for scaling
         var maxVal = 0;
         features.forEach(function(f) {
-            if (Math.abs(f.shap_value) > maxVal) maxVal = Math.abs(f.shap_value);
+            if (Math.abs(f.contribution) > maxVal) maxVal = Math.abs(f.contribution);
         });
         if (maxVal === 0) maxVal = 1;
+
+        // Detect dark mode for text color
+        var isDarkMode = document.body.classList.contains('dark-mode');
+        var textColor = isDarkMode ? '#E0E0E0' : '#2C3E50';
 
         // Draw bars
         features.forEach(function(feature, i) {
             var y = padding.top + i * (barHeight + barGap);
-            var val = feature.shap_value;
+            var val = feature.contribution;
             var barWidth = (Math.abs(val) / maxVal) * (chartWidth / 2);
             var x;
 
@@ -566,7 +570,7 @@ function displayShapExplanation(formData) {
             ctx.fill();
 
             // Draw feature name
-            ctx.fillStyle = '#2C3E50';
+            ctx.fillStyle = textColor;
             ctx.font = '12px Inter, sans-serif';
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';

@@ -1,6 +1,16 @@
 <?php
 $page_title = 'System Metrics';
 $page_scripts = ['metrics.js'];
+
+// Auth middleware - require admin role
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth_middleware.php';
+require_role(['admin']);
+
 include '../includes/header.php';
 ?>
 

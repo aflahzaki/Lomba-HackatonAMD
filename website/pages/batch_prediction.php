@@ -1,6 +1,16 @@
 <?php
 $page_title = 'Batch Prediction';
 $page_scripts = ['batch_prediction.js'];
+
+// Auth middleware must run before any HTML output
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/auth_middleware.php';
+require_role(['guru']);
+
 include '../includes/header.php';
 ?>
 

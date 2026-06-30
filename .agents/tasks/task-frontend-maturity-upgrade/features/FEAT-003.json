@@ -1,0 +1,33 @@
+{
+  "id": "FEAT-003",
+  "type": "fix",
+  "description": "Address code review issues: fix SHAP chart rendering, What-If deterministic fallback, batch prediction schema mapping, role guards, dark mode coverage, and advisor history validation.",
+  "status": "in_progress",
+  "steps": [
+    "Fix predictions.js: change response.explanation check to response.features, and use item.contribution instead of item.shap_value for bar magnitude",
+    "Fix what_if.php: replace rand(3,12) with deterministic fixed offset (e.g., max(5, $new_probability - 8))",
+    "Fix batch_predict.php: transform each student record field names before forwarding to AI backend (nilai_rata_rata -> scores dict, peringkat -> school_ranking, total_siswa -> total_students, akreditasi -> school_accreditation, target_prodi -> target_program_id)",
+    "Fix batch_prediction.php: add role guard requiring guru role",
+    "Fix metrics.php: add role guard requiring admin role (soft check for demo)",
+    "Fix style.css dark-mode: add overrides for shadow-sm, shadow-md, shadow-lg, shadow-xl, color-accent-blue-light, color-primary-light, plus form inputs and cards",
+    "Fix predictions.js SHAP canvas: detect dark mode and adjust text fill color accordingly",
+    "Fix advisor.php: add validation for history array (max 20 entries, each must have role and content string fields)"
+  ],
+  "acceptance_criteria": [
+    "SHAP chart renders correctly using response.features and item.contribution",
+    "What-If fallback produces deterministic results with fixed offset",
+    "Batch prediction PHP proxy transforms field names before forwarding to AI backend",
+    "batch_prediction.php has guru role guard",
+    "metrics.php has admin role guard",
+    "Dark mode covers shadow variables, accent colors, and form inputs",
+    "SHAP canvas text adapts to dark mode",
+    "advisor.php validates history array structure"
+  ],
+  "verification": [
+    "php -l website/api/what_if.php && php -l website/api/batch_predict.php && php -l website/api/advisor.php && php -l website/pages/batch_prediction.php && php -l website/pages/metrics.php",
+    "node --check website/assets/js/predictions.js",
+    "cd ai_backend && python -m pytest tests/ -v --tb=short"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}

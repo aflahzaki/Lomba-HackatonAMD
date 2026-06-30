@@ -58,8 +58,8 @@ if ($response !== null) {
     $akr_bonus = $akreditasi === 'A' ? 0.1 : ($akreditasi === 'B' ? 0.05 : 0);
     $new_probability = min(99, max(5, round(($nilai / 100 * 0.5 + $ratio * 0.35 + $akr_bonus) * 100)));
 
-    // Simulate a "current" that is slightly lower
-    $current_probability = max(5, $new_probability - rand(3, 12));
+    // Simulate a "current" that uses a fixed offset for determinism
+    $current_probability = max(5, $new_probability - 8);
 
     http_response_code(200);
     echo json_encode([

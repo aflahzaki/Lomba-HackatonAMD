@@ -1480,12 +1480,52 @@ body {
 body.dark-mode {
     --color-bg: #1A1A2E;
     --color-bg-card: #2D2D44;
+    --color-bg-dark: #0F0F1A;
     --color-text: #E0E0E0;
     --color-text-light: #B0B0B0;
     --color-text-muted: #808080;
     --color-border: #3D3D5C;
     --color-primary: #4A6FA5;
     --color-primary-dark: #2E4057;
+    --color-primary-light: #6B8FBF;
+    --color-accent-blue: #4A9AFF;
+    --color-accent-blue-light: #6BB3FF;
+    --color-accent-blue-dark: #2E7AD4;
+    --color-accent-red: #E74C3C;
+    --color-accent-red-light: #FF6B6B;
+    --color-accent-green: #2ECC71;
+    --color-accent-green-light: #4ADE80;
+    --color-warning: #F1C40F;
+    --color-warning-light: #F7DC6F;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
+    --shadow-xl: 0 20px 60px rgba(0,0,0,0.6);
+    --shadow-glow: 0 0 30px rgba(74,154,255,0.3);
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: #2D2D44;
+    color: #E0E0E0;
+    border-color: #3D3D5C;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: #808080;
+}
+
+body.dark-mode .card,
+body.dark-mode [class*="card"] {
+    background-color: var(--color-bg-card);
+    border-color: var(--color-border);
+}
+
+body.dark-mode code {
+    background-color: #1A1A2E;
+    color: #B0B0B0;
 }
 
 body.dark-mode .navbar.scrolled {

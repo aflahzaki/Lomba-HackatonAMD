@@ -41,9 +41,22 @@ if (isset($input['context'])) {
     $payload['context'] = $input['context'];
 }
 
-// Include conversation history if available
+// Include conversation history if available (validated)
 if (isset($input['history']) && is_array($input['history'])) {
-    $payload['history'] = $input['history'];
+    $validated_history = [];
+    $history_slice = array_slice($input['history'], -20); // Max 20 entries
+    foreach ($history_slice as $entry) {
+        if (is_array($entry) && isset($entry['role']) && isset($entry['content'])
+            && is_string($entry['role']) && is_string($entry['content'])) {
+            $validated_history[] = [
+                'role' => $entry['role'],
+                'content' => $entry['content']
+            ];
+        }
+    }
+    if (!empty($validated_history)) {
+        $payload['history'] = $validated_history;
+    }
 }
 
 // Call AI Backend

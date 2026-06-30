@@ -31,9 +31,25 @@ if (!$input || !isset($input['students']) || !is_array($input['students'])) {
 
 require_once '../config/ai_backend.php';
 
+// Transform student records to match Python backend schema
+$transformed_students = [];
+foreach ($input['students'] as $student) {
+    $nilai = floatval($student['nilai_rata_rata'] ?? 75);
+    $transformed_students[] = [
+        'scores' => [
+            'average' => ['sem1' => $nilai, 'sem2' => $nilai, 'sem3' => $nilai, 'sem4' => $nilai, 'sem5' => $nilai]
+        ],
+        'school_ranking' => intval($student['peringkat'] ?? 10),
+        'total_students' => intval($student['total_siswa'] ?? 100),
+        'school_accreditation' => $student['akreditasi'] ?? 'B',
+        'target_program_id' => $student['target_prodi'] ?? '',
+        'nama' => $student['nama'] ?? 'Unknown'
+    ];
+}
+
 // Build request payload
 $payload = [
-    'students' => $input['students']
+    'students' => $transformed_students
 ];
 
 // Call AI Backend
