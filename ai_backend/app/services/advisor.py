@@ -11,6 +11,12 @@ from ..config import settings
 # Maximum allowed message length (characters)
 MAX_MESSAGE_LENGTH = 2000
 
+# Maximum allowed length for context-derived strings (e.g., target_program)
+MAX_CONTEXT_STRING_LENGTH = 200
+
+# Maximum allowed length for assembled context message
+MAX_CONTEXT_MSG_LENGTH = 500
+
 # Patterns that may indicate prompt injection attempts
 INJECTION_PATTERNS = [
     r"(?i)ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?)",
@@ -19,6 +25,10 @@ INJECTION_PATTERNS = [
     r"(?i)new\s+instructions?\s*:",
     r"(?i)forget\s+(everything|all|your\s+instructions)",
     r"(?i)disregard\s+(all\s+)?(previous|prior|above)",
+    # Indonesian injection patterns
+    r"(?i)abaikan\s+instruksi",
+    r"(?i)kamu\s+sekarang\s+adalah",
+    r"(?i)lupakan\s+prompt",
 ]
 
 
@@ -81,21 +91,46 @@ async def get_advisor_response(
     # Build context message if prediction results are available
     context_msg = ""
     if context:
+        # Validate and sanitize probability field
         if "probability" in context:
-            context_msg += f"\nHasil prediksi: {context['probability']}% peluang diterima."
+            try:
+                prob_val = float(context["probability"])
+                context_msg += f"\nHasil prediksi: {prob_val}% peluang diterima."
+            except (ValueError, TypeError):
+                pass  # Skip invalid probability
         if "variables" in context:
             context_msg += "\nBreakdown variabel:"
-            for var in context["variables"]:
-                context_msg += (
-                    f"\n- {var.get('name', '')}: {var.get('normalized_score', 0):.2f} "
-                    f"(bobot {var.get('weight', 0):.0%})"
-                )
+            variables = context["variables"]
+            if isinstance(variables, list):
+                for var in variables[:10]:  # Limit to 10 variables max
+                    if isinstance(var, dict):
+                        name = str(var.get("name", ""))[:MAX_CONTEXT_STRING_LENGTH]
+                        try:
+                            score = float(var.get("normalized_score", 0))
+                            weight = float(var.get("weight", 0))
+                        except (ValueError, TypeError):
+                            score = 0.0
+                            weight = 0.0
+                        context_msg += (
+                            f"\n- {name}: {score:.2f} "
+                            f"(bobot {weight:.0%})"
+                        )
         if "input_summary" in context:
             summary = context["input_summary"]
-            if "target_program" in summary:
-                context_msg += f"\nProgram target: {summary['target_program']}"
-            if "avg_score" in summary:
-                context_msg += f"\nNilai rata-rata: {summary['avg_score']}"
+            if isinstance(summary, dict):
+                if "target_program" in summary:
+                    target = str(summary["target_program"])[:MAX_CONTEXT_STRING_LENGTH]
+                    context_msg += f"\nProgram target: {target}"
+                if "avg_score" in summary:
+                    try:
+                        avg = float(summary["avg_score"])
+                        context_msg += f"\nNilai rata-rata: {avg}"
+                    except (ValueError, TypeError):
+                        pass  # Skip invalid avg_score
+
+        # Truncate assembled context message to prevent oversized prompts
+        if len(context_msg) > MAX_CONTEXT_MSG_LENGTH:
+            context_msg = context_msg[:MAX_CONTEXT_MSG_LENGTH] + "..."
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},

@@ -87,7 +87,7 @@ async def predict(request: PredictionRequest):
     except (ValueError, TypeError) as e:
         raise HTTPException(
             status_code=422,
-            detail=f"Invalid score value: all scores must be numeric. Error: {str(e)}",
+            detail=[{"msg": f"Invalid score value: all scores must be numeric. Error: {str(e)}", "type": "value_error"}],
         )
 
     avg_score = total_score / score_count if score_count > 0 else 75.0
@@ -168,7 +168,7 @@ async def recommend(request: RecommendRequest):
     except (ValueError, TypeError) as e:
         raise HTTPException(
             status_code=422,
-            detail=f"Invalid score value: all scores must be numeric. Error: {str(e)}",
+            detail=[{"msg": f"Invalid score value: all scores must be numeric. Error: {str(e)}", "type": "value_error"}],
         )
 
     avg_score = total_score / score_count if score_count > 0 else 75.0

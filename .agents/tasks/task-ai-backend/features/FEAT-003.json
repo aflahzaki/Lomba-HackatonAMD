@@ -1,0 +1,24 @@
+{
+  "id": "FEAT-003",
+  "type": "fix",
+  "description": "Address v2 review findings: sanitization tests, context dict injection, 422 error format, Indonesian injection patterns",
+  "status": "in_progress",
+  "steps": [
+    "Add Indonesian injection patterns to INJECTION_PATTERNS in advisor.py",
+    "Apply sanitization/length limits to context-derived content in advisor.py",
+    "Wrap manual HTTPException detail in list format consistent with Pydantic in main.py",
+    "Add tests for _sanitize_message() covering truncation, injection filtering, and passthrough"
+  ],
+  "acceptance_criteria": [
+    "Indonesian injection patterns (abaikan instruksi, kamu sekarang adalah, lupakan prompt) are filtered",
+    "Context dict fields are truncated and validated before LLM insertion",
+    "Manual 422 errors use detail=[{\"msg\": \"...\", \"type\": \"value_error\"}] format",
+    "Tests exist for _sanitize_message() truncation, injection filtering, and normal passthrough",
+    "All existing and new tests pass"
+  ],
+  "verification": [
+    "python3 -m pytest ai_backend/tests/ -v"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}
