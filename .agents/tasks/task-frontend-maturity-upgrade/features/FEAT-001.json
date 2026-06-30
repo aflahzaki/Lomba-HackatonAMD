@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Create new frontend pages (What-If Simulator, Batch Prediction, Metrics), their PHP API proxy endpoints, and corresponding JavaScript files.",
+  "status": "in_progress",
+  "steps": [
+    "Create website/api/explain.php - PHP proxy endpoint that accepts POST with prediction data and calls callAIBackend('/api/explain', $data). Follow the exact pattern of website/api/advisor.php (headers, OPTIONS handling, POST validation, require ai_backend.php, fallback response).",
+    "Create website/api/batch_predict.php - PHP proxy endpoint that accepts POST with array of student records, calls callAIBackend('/api/predict/batch', $data). Follow same pattern. Fallback: return deterministic results for each record.",
+    "Create website/api/metrics.php - PHP proxy endpoint using GET method, calls callAIBackend('/api/metrics', []) but using a GET-based cURL (modify callAIBackend pattern or use direct cURL for GET). Return usage statistics JSON.",
+    "Create website/api/what_if.php - PHP proxy endpoint that accepts POST with what-if parameters, calls callAIBackend('/api/what-if', $data). Follow same POST pattern as advisor.php.",
+    "Create website/pages/what_if.php - Interactive What-If Simulator page with: slider for nilai rata-rata (60-100), slider for peringkat (1-500), dropdown akreditasi (A/B/C), target program selector (reuse the search pattern from prediksi.php), real-time API calls on slider change, comparison visualization showing 'Current probability vs New probability' with animated gauge. Set $page_scripts = ['what_if.js'].",
+    "Create website/assets/js/what_if.js - JavaScript for what-if page: debounced slider event handlers, calls ../api/what_if.php via ajaxRequest(), animates probability comparison (old vs new), uses gauge animation pattern from predictions.js.",
+    "Create website/pages/batch_prediction.php - Batch Prediction page for Guru BK with: CSV upload form (columns: nama, nilai_rata_rata, peringkat, total_siswa, akreditasi, target_prodi), results table with color coding (green >70%, yellow 40-70%, red <40%), CSV export button. Set $page_scripts = ['batch_prediction.js'].",
+    "Create website/assets/js/batch_prediction.js - JavaScript for batch page: CSV file parsing (vanilla FileReader + split), POST parsed data to ../api/batch_predict.php, render results table with color-coded cells, implement CSV export via Blob/download.",
+    "Create website/pages/metrics.php - System Metrics page with: cards for Total Predictions, Avg Response Time, Popular Programs. Auto-refresh every 30 seconds. Set $page_scripts = ['metrics.js'].",
+    "Create website/assets/js/metrics.js - JavaScript for metrics page: fetch ../api/metrics.php via ajaxRequest() GET, populate stat cards, setInterval for 30s auto-refresh with fade animation."
+  ],
+  "acceptance_criteria": [
+    "website/api/explain.php exists and returns valid JSON for POST requests",
+    "website/api/batch_predict.php exists and returns valid JSON for POST requests with array of students",
+    "website/api/metrics.php exists and returns valid JSON for GET requests",
+    "website/api/what_if.php exists and returns valid JSON for POST requests",
+    "website/pages/what_if.php renders without PHP syntax errors and includes sliders, dropdown, program search, and comparison visualization",
+    "website/pages/batch_prediction.php renders without PHP syntax errors and includes CSV upload form, results table area, export button",
+    "website/pages/metrics.php renders without PHP syntax errors and includes stat cards with auto-refresh",
+    "All new JS files use ajaxRequest() from main.js and follow vanilla JS patterns"
+  ],
+  "verification": [
+    "Run: find website/api -name '*.php' -newer website/api/advisor.php | xargs -I{} php -l {} to verify PHP syntax of new API files",
+    "Run: find website/pages -name '*.php' -newer website/pages/advisor.php | xargs -I{} php -l {} to verify PHP syntax of new page files",
+    "Run: cd ai_backend && python -m pytest tests/ -v --tb=short to confirm backend tests still pass"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
