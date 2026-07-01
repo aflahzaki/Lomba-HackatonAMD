@@ -12,30 +12,12 @@
  *   6. Daya Tampung Absolut (0.05)
  */
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once __DIR__ . '/api_helpers.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+send_cors_headers('POST, OPTIONS');
+enforce_method('POST');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed. Use POST.']);
-    exit;
-}
-
-// Get input data
-$input = json_decode(file_get_contents('php://input'), true);
-
-if (!$input) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Invalid JSON input']);
-    exit;
-}
+$input = read_json_body();
 
 // Validate required fields
 $required = ['scores', 'school_ranking', 'total_students', 'school_accreditation', 'target_program_id'];
@@ -47,14 +29,7 @@ foreach ($required as $field) {
     }
 }
 
-require_once '../config/database.php';
-
-$pdo = getDBConnection();
-if (!$pdo) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
-    exit;
-}
+$pdo = require_db();
 
 // Calculate prediction
 $prediction = calculatePrediction($input, $pdo);
@@ -122,7 +97,7 @@ function calculatePrediction($input, $pdo)
 
             // Fall back to LIKE search only if exact match returns nothing
             if (!$sidataProdi) {
-                $escapedName = str_replace(['%', '_'], ['\\%', '\\_'], $programName);
+                $escapedName = escape_like($programName);
                 $stmt = $pdo->prepare('
                     SELECT * FROM sidata_prodi
                     WHERE nama_prodi LIKE ?
@@ -289,7 +264,7 @@ function calculatePrediction($input, $pdo)
             }
 
             if (!empty($mainKeyword)) {
-                $escapedKeyword = str_replace(['%', '_'], ['\\%', '\\_'], $mainKeyword);
+                $escapedKeyword = escape_like($mainKeyword);
                 $stmt = $pdo->prepare('
                     SELECT sp.nama_prodi, sp.peminat_2022, sp.daya_tampung_2022, sp.daya_tampung_2023,
                            su.nama_univ

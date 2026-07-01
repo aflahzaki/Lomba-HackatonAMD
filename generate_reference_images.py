@@ -17,6 +17,17 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(SCRIPT_DIR, "references_images")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
+
+def save_chart(filename):
+    """Finalize current figure: tight-layout, save to OUTPUT_DIR, close, and print."""
+    plt.tight_layout()
+    path = os.path.join(OUTPUT_DIR, filename)
+    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close()
+    print(f"  Generated: {path}")
+    return path
+
+
 # Color palette matching LangkahKampus branding
 DARK_BLUE = "#2E4057"
 ACCENT_BLUE = "#1A73E8"
@@ -67,12 +78,7 @@ def generate_snbp_acceptance_chart():
     ax.text(0.5, -0.12, "Sumber: SNPMB/LTMPT (2024), BPS - Statistik Pendidikan",
             transform=ax.transAxes, ha="center", fontsize=9, color=GRAY, style="italic")
 
-    plt.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "snbp_acceptance_stats.png")
-    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
-    plt.close()
-    print(f"  Generated: {path}")
-    return path
+    return save_chart("snbp_acceptance_stats.png")
 
 
 def generate_ml_model_comparison():
@@ -127,12 +133,7 @@ def generate_ml_model_comparison():
             "Sumber: Internal benchmark pada 50K+ records data historis SNBP",
             transform=ax.transAxes, ha="center", fontsize=9, color=GRAY, style="italic")
 
-    plt.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "ml_model_comparison.png")
-    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
-    plt.close()
-    print(f"  Generated: {path}")
-    return path
+    return save_chart("ml_model_comparison.png")
 
 
 def generate_tam_sam_som():
@@ -182,12 +183,7 @@ def generate_tam_sam_som():
             "Sumber: BPS (2024), SNPMB (2024), Analisis Internal",
             transform=ax.transAxes, ha="center", fontsize=9, color=GRAY, style="italic")
 
-    plt.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "tam_sam_som_diagram.png")
-    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
-    plt.close()
-    print(f"  Generated: {path}")
-    return path
+    return save_chart("tam_sam_som_diagram.png")
 
 
 def generate_xai_framework_comparison():
@@ -242,12 +238,7 @@ def generate_xai_framework_comparison():
              "SHAP (Lundberg & Lee, 2017) | LIME (Ribeiro et al., 2016) | DiCE (Mothilal et al., 2020)",
              ha="center", fontsize=8, color=GRAY, style="italic")
 
-    plt.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "xai_framework_comparison.png")
-    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
-    plt.close()
-    print(f"  Generated: {path}")
-    return path
+    return save_chart("xai_framework_comparison.png")
 
 
 def generate_market_validation_chart():
@@ -288,12 +279,7 @@ def generate_market_validation_chart():
             "Sumber: Google Trends (2024), APJII (2024), We Are Social Digital Report",
             transform=ax.transAxes, ha="center", fontsize=9, color=GRAY, style="italic")
 
-    plt.tight_layout()
-    path = os.path.join(OUTPUT_DIR, "market_validation_trends.png")
-    plt.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
-    plt.close()
-    print(f"  Generated: {path}")
-    return path
+    return save_chart("market_validation_trends.png")
 
 
 def verify_references():

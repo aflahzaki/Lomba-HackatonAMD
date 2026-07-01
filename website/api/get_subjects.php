@@ -5,15 +5,10 @@
  * ?jurusan=IPA|IPS|Bahasa|<smk_jurusan_name>
  */
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET');
+require_once __DIR__ . '/api_helpers.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-    http_response_code(405);
-    echo json_encode(['error' => 'Method not allowed. Use GET.']);
-    exit;
-}
+send_cors_headers('GET');
+enforce_method('GET');
 
 $jurusan = isset($_GET['jurusan']) ? trim($_GET['jurusan']) : '';
 
@@ -63,14 +58,7 @@ if (isset($smaSubjects[$jurusan])) {
 }
 
 // Otherwise query smk_subjects table
-require_once '../config/database.php';
-
-$pdo = getDBConnection();
-if (!$pdo) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database connection failed']);
-    exit;
-}
+$pdo = require_db();
 
 try {
     $stmt = $pdo->prepare('SELECT subject_name FROM smk_subjects WHERE jurusan = ? ORDER BY is_core DESC, id ASC');

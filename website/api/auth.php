@@ -9,6 +9,7 @@ session_start();
 require_once __DIR__ . '/../config/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/form_helpers.php';
 
 // Determine action from POST or GET
 $action = '';
@@ -45,13 +46,7 @@ function handleLogin()
         return;
     }
 
-    // CSRF verification
-    $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-    if (!verify_csrf_token($csrf_token)) {
-        flash_message('danger', 'Token keamanan tidak valid. Silakan coba lagi.');
-        redirect('../pages/login.php');
-        return;
-    }
+    require_csrf('login.php');
 
     // Validate input
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
@@ -69,13 +64,7 @@ function handleLogin()
         return;
     }
 
-    // Database lookup
-    $pdo = getDBConnection();
-    if (!$pdo) {
-        flash_message('danger', 'Koneksi database gagal. Silakan coba lagi.');
-        redirect('../pages/login.php');
-        return;
-    }
+    $pdo = require_db_or_redirect('login.php');
 
     try {
         $stmt = $pdo->prepare('SELECT id, email, password_hash, full_name, role, is_premium, is_active FROM users WHERE email = :email LIMIT 1');
@@ -151,13 +140,7 @@ function handleRegister()
         return;
     }
 
-    // CSRF verification
-    $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-    if (!verify_csrf_token($csrf_token)) {
-        flash_message('danger', 'Token keamanan tidak valid. Silakan coba lagi.');
-        redirect('../pages/register.php');
-        return;
-    }
+    require_csrf('register.php');
 
     // Collect and validate input
     $full_name = isset($_POST['full_name']) ? trim($_POST['full_name']) : '';
@@ -219,13 +202,7 @@ function handleRegister()
         return;
     }
 
-    // Database operations
-    $pdo = getDBConnection();
-    if (!$pdo) {
-        flash_message('danger', 'Koneksi database gagal. Silakan coba lagi.');
-        redirect('../pages/register.php');
-        return;
-    }
+    $pdo = require_db_or_redirect('register.php');
 
     try {
         // Check if email already exists
