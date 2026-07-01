@@ -66,7 +66,7 @@ def main():
 
         except Exception as e:
             elapsed = time.time() - start
-            results.append((stage_name, "FAILED", f"{elapsed:.1f}s", str(e)[:50]))
+            results.append((stage_name, "FAILED", f"{elapsed:.1f}s", str(e)))
             print(f"ERROR: {e}")
 
     total_elapsed = time.time() - total_start

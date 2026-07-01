@@ -57,10 +57,15 @@ if (!$pdo) {
 }
 
 // Calculate prediction
-$prediction = calculatePrediction($input, $pdo);
-
-http_response_code(200);
-echo json_encode($prediction);
+try {
+    $prediction = calculatePrediction($input, $pdo);
+    http_response_code(200);
+    echo json_encode($prediction);
+} catch (Exception $e) {
+    error_log('predict.php - unexpected error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to calculate prediction']);
+}
 
 /**
  * Deterministic prediction calculation with 6 variables
@@ -79,6 +84,7 @@ function calculatePrediction($input, $pdo)
     $programUniversity = '';
     $programBlocksChoice2 = false;
     $programId = null;
+    $warnings = [];
 
     if (is_numeric($targetProgramId)) {
         $programId = (int)$targetProgramId;
@@ -98,6 +104,7 @@ function calculatePrediction($input, $pdo)
             }
         } catch (PDOException $e) {
             error_log('predict.php - program lookup error: ' . $e->getMessage());
+            $warnings[] = 'Program lookup failed; results may be less accurate';
         }
     }
 
@@ -134,6 +141,7 @@ function calculatePrediction($input, $pdo)
             }
         } catch (PDOException $e) {
             error_log('predict.php - sidata lookup error: ' . $e->getMessage());
+            $warnings[] = 'Competition data lookup failed; using defaults';
         }
     }
 
@@ -271,6 +279,7 @@ function calculatePrediction($input, $pdo)
             $admissionHistory = $stmt->fetchAll();
         } catch (PDOException $e) {
             error_log('predict.php - admission history error: ' . $e->getMessage());
+            $warnings[] = 'Admission history unavailable';
         }
     }
 
@@ -322,6 +331,7 @@ function calculatePrediction($input, $pdo)
             }
         } catch (PDOException $e) {
             error_log('predict.php - recommendations error: ' . $e->getMessage());
+            $warnings[] = 'Recommendations unavailable';
         }
     }
 
@@ -338,7 +348,7 @@ function calculatePrediction($input, $pdo)
             $row = $stmt->fetch();
             $peerCount = (int)($row['cnt'] ?? 0);
         } catch (PDOException $e) {
-            // Non-critical, continue
+            error_log('predict.php - peer count error: ' . $e->getMessage());
         }
     }
 
@@ -360,6 +370,7 @@ function calculatePrediction($input, $pdo)
             'target_university' => $programUniversity,
             'jurusan' => $jurusan
         ],
-        'timestamp' => date('c')
+        'timestamp' => date('c'),
+        'warnings' => $warnings,
     ];
 }
