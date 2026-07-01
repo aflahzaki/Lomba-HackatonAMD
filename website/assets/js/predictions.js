@@ -503,7 +503,11 @@ function initProgramSearch() {
 
         debounceTimer = setTimeout(function() {
             ajaxRequest('../api/search_programs.php?q=' + encodeURIComponent(query), 'GET', null, function(error, response) {
-                if (error) return;
+                if (error) {
+                    resultsContainer.innerHTML = '<div class="search-result-item text-muted">Gagal mencari program: ' + error + '</div>';
+                    resultsContainer.classList.remove('hidden');
+                    return;
+                }
 
                 resultsContainer.innerHTML = '';
                 resultsContainer.classList.remove('hidden');

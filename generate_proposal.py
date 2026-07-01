@@ -7,6 +7,9 @@ This script rewrites 'Template Proposal Ide Bisnis Competition.docx'
 with comprehensive, publication-ready content covering all required sections.
 """
 
+import os
+import sys
+
 from docx import Document
 from docx.shared import Inches, Pt, Cm, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -14,7 +17,6 @@ from docx.enum.style import WD_STYLE_TYPE
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
-import os
 
 # Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -174,8 +176,13 @@ def build_cover_page(doc):
     # Logo
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = p.add_run()
-    run.add_picture(LOGO_PATH, width=Inches(2.0))
+    if os.path.exists(LOGO_PATH):
+        run = p.add_run()
+        run.add_picture(LOGO_PATH, width=Inches(2.0))
+    else:
+        print(f"  Warning: Logo not found: {LOGO_PATH}")
+        run = p.add_run("[Logo LangkahKampus]")
+        run.font.size = Pt(12)
 
     # Spacing
     doc.add_paragraph()
@@ -1207,16 +1214,26 @@ def main():
 
     # Save document (overwrite template)
     print(f"Saving document to: {TEMPLATE_PATH}")
-    doc.save(TEMPLATE_PATH)
+    try:
+        doc.save(TEMPLATE_PATH)
+    except Exception as e:
+        print(f"Error: Failed to save document: {e}")
+        return 1
+
     print("Document generated successfully!")
 
     # Quick validation
-    verify_doc = Document(TEMPLATE_PATH)
-    para_count = len(verify_doc.paragraphs)
-    word_count = len(" ".join([p.text for p in verify_doc.paragraphs]).split())
-    print(f"Verification: {para_count} paragraphs, {word_count} words")
+    try:
+        verify_doc = Document(TEMPLATE_PATH)
+        para_count = len(verify_doc.paragraphs)
+        word_count = len(" ".join([p.text for p in verify_doc.paragraphs]).split())
+        print(f"Verification: {para_count} paragraphs, {word_count} words")
+    except Exception as e:
+        print(f"Warning: Verification failed: {e}")
+
     print("Done!")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

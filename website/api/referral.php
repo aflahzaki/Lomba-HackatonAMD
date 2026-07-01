@@ -26,7 +26,15 @@ if ($method === 'POST') {
     }
 
     $user_id = $_SESSION['user_id'];
-    $referral_code = 'LK-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
+
+    try {
+        $referral_code = 'LK-' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
+    } catch (Exception $e) {
+        error_log('referral.php - random_bytes error: ' . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Gagal membuat kode referral. Silakan coba lagi.']);
+        exit;
+    }
 
     // In production: INSERT INTO referral_tracking (user_id, referral_code) VALUES (?, ?)
     // Demo response:

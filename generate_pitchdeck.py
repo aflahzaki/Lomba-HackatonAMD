@@ -4,12 +4,14 @@ Generate the complete PPTX pitch deck for LangkahKampus business case competitio
 Populates 'Pitchdeck Business Idea Competition.pptx' with compelling pitch deck content.
 """
 
+import os
+import sys
+
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
-import os
 
 # Paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -470,8 +472,16 @@ def build_slide_10(slide):
 
 def main():
     """Main function to generate the pitch deck."""
+    if not os.path.exists(PPTX_FILE):
+        print(f"Error: Template file not found: {PPTX_FILE}")
+        return 1
+
     print("Loading template...")
-    prs = Presentation(PPTX_FILE)
+    try:
+        prs = Presentation(PPTX_FILE)
+    except Exception as e:
+        print(f"Error: Failed to load template: {e}")
+        return 1
 
     slides = list(prs.slides)
     print(f"Template has {len(slides)} slides")
@@ -507,9 +517,15 @@ def main():
 
     # Save
     print(f"Saving to {PPTX_FILE}...")
-    prs.save(PPTX_FILE)
+    try:
+        prs.save(PPTX_FILE)
+    except Exception as e:
+        print(f"Error: Failed to save presentation: {e}")
+        return 1
+
     print("Done! Pitch deck generated successfully.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

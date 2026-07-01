@@ -169,6 +169,23 @@ function initUniversityMap() {
                     iconAnchor: [8, 8]
                 })
             }).addTo(map).bindPopup('Lokasi Anda');
+        }, function(error) {
+            var message;
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = 'Akses lokasi ditolak. Peta tetap menampilkan seluruh universitas.';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = 'Informasi lokasi tidak tersedia.';
+                    break;
+                case error.TIMEOUT:
+                    message = 'Permintaan lokasi timeout.';
+                    break;
+                default:
+                    message = 'Gagal mendapatkan lokasi.';
+                    break;
+            }
+            console.warn('Geolocation error: ' + message);
         });
     }
 }

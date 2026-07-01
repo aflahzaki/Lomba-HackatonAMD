@@ -5,6 +5,7 @@ Reads daftar_universitas.csv and daftar_prodi.csv and outputs SQL INSERT stateme
 """
 import csv
 import os
+import sys
 
 CSV_DIR = "/projects/sandbox/PRE-AIAgentJarvis/Dataset Data Sistem Informasi Daya Tampung (SIDATA) PTN/"
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seed_sidata.sql")
@@ -28,6 +29,10 @@ def int_or_null(value):
 
 
 def main():
+    if not os.path.isdir(CSV_DIR):
+        print(f"Error: CSV directory not found: {CSV_DIR}")
+        return 1
+
     lines = []
     lines.append("-- ============================================================")
     lines.append("-- LangkahKampus - SIDATA PTN Seed Data")
@@ -44,6 +49,10 @@ def main():
 
     # Read universities
     univ_file = os.path.join(CSV_DIR, "daftar_universitas.csv")
+    if not os.path.exists(univ_file):
+        print(f"Error: University CSV not found: {univ_file}")
+        return 1
+
     univ_count = 0
     with open(univ_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -67,6 +76,10 @@ def main():
 
     # Read prodi
     prodi_file = os.path.join(CSV_DIR, "daftar_prodi.csv")
+    if not os.path.exists(prodi_file):
+        print(f"Error: Prodi CSV not found: {prodi_file}")
+        return 1
+
     prodi_count = 0
     with open(prodi_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
@@ -101,13 +114,18 @@ def main():
     lines.append(f"-- Total prodi inserted: {prodi_count}")
     lines.append("")
 
-    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(lines))
+    try:
+        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(lines))
+    except IOError as e:
+        print(f"Error: Failed to write output file: {e}")
+        return 1
 
     print(f"Generated {OUTPUT_FILE}")
     print(f"  Universities: {univ_count}")
     print(f"  Prodi: {prodi_count}")
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

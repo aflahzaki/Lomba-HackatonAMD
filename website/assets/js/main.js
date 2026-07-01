@@ -339,6 +339,7 @@ function initTypingEffect(element, texts, speed) {
 function ajaxRequest(url, method, data, callback) {
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
+    xhr.timeout = 30000;
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
@@ -354,9 +355,17 @@ function ajaxRequest(url, method, data, callback) {
             if (xhr.status >= 200 && xhr.status < 300) {
                 callback(null, response);
             } else {
-                callback(response.error || 'Request failed', null);
+                callback(response.error || 'Request failed (HTTP ' + xhr.status + ')', null);
             }
         }
+    };
+
+    xhr.onerror = function() {
+        callback('Koneksi gagal. Periksa koneksi internet Anda.', null);
+    };
+
+    xhr.ontimeout = function() {
+        callback('Request timeout. Server tidak merespons.', null);
     };
 
     if (data) {

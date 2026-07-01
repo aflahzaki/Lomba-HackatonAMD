@@ -145,6 +145,11 @@ function format_date_id($datetime)
     ];
 
     $timestamp = strtotime($datetime);
+    if ($timestamp === false) {
+        error_log('format_date_id: invalid datetime value: ' . $datetime);
+        return htmlspecialchars($datetime, ENT_QUOTES, 'UTF-8');
+    }
+
     $day = date('d', $timestamp);
     $month = $months[(int)date('m', $timestamp)];
     $year = date('Y', $timestamp);
