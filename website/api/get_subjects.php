@@ -5,9 +5,11 @@
  * ?jurusan=IPA|IPS|Bahasa|<smk_jurusan_name>
  */
 
+require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/../includes/cors.php';
+
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET');
+set_cors_headers();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     http_response_code(405);

@@ -5,10 +5,11 @@
  * Returns up to 10 matching schools from the schools table
  */
 
+require_once __DIR__ . '/../config/app.php';
+require_once __DIR__ . '/../includes/cors.php';
+
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET');
-header('Access-Control-Allow-Headers: Content-Type');
+set_cors_headers();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);

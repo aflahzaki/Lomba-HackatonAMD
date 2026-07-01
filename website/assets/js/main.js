@@ -379,9 +379,21 @@ function showToast(type, message, duration) {
 
     var toast = document.createElement('div');
     toast.className = 'toast toast-' + type;
-    toast.innerHTML = '<i class="fas ' + (iconMap[type] || iconMap.info) + '"></i>' +
-        '<span>' + message + '</span>' +
-        '<button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>';
+
+    var icon = document.createElement('i');
+    icon.className = 'fas ' + (iconMap[type] || iconMap.info);
+
+    var span = document.createElement('span');
+    span.textContent = message;
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'toast-close';
+    closeBtn.onclick = function() { toast.remove(); };
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+
+    toast.appendChild(icon);
+    toast.appendChild(span);
+    toast.appendChild(closeBtn);
 
     document.body.appendChild(toast);
 
