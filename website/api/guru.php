@@ -4,33 +4,9 @@
  * Handles guru-specific actions like adding comments
  */
 
-session_start();
+require_once __DIR__ . '/form_helpers.php';
 
-require_once __DIR__ . '/../config/app.php';
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../includes/functions.php';
-
-// Only accept POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    flash_message('danger', 'Method tidak diizinkan.');
-    redirect('../pages/dashboard_guru.php');
-    exit;
-}
-
-// Check authentication
-if (!is_logged_in()) {
-    flash_message('warning', 'Silakan login terlebih dahulu.');
-    redirect('../pages/login.php');
-    exit;
-}
-
-// Check role - only guru can access
-$user = get_user();
-if ($user['role'] !== 'guru') {
-    flash_message('danger', 'Anda tidak memiliki akses ke fitur ini.');
-    redirect('../pages/dashboard_student.php');
-    exit;
-}
+$user = guard_form_api('guru', 'dashboard_guru.php');
 
 $action = isset($_POST['action']) ? sanitize_input($_POST['action']) : '';
 
@@ -52,13 +28,7 @@ switch ($action) {
  */
 function handleAddComment()
 {
-    // CSRF verification
-    $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-    if (!verify_csrf_token($csrf_token)) {
-        flash_message('danger', 'Token keamanan tidak valid. Silakan coba lagi.');
-        redirect('../pages/dashboard_guru.php');
-        return;
-    }
+    require_csrf('dashboard_guru.php');
 
     $guru_id = $_SESSION['user_id'];
     $student_id = isset($_POST['student_id']) ? (int) $_POST['student_id'] : 0;
@@ -83,13 +53,7 @@ function handleAddComment()
         return;
     }
 
-    // Connect to database
-    $pdo = getDBConnection();
-    if (!$pdo) {
-        flash_message('danger', 'Koneksi database gagal. Silakan coba lagi.');
-        redirect('../pages/dashboard_guru.php');
-        return;
-    }
+    $pdo = require_db_or_redirect('dashboard_guru.php');
 
     try {
         // Validate that guru is linked to this student via invite_codes
@@ -132,13 +96,7 @@ function handleAddComment()
  */
 function handleClaimCode()
 {
-    // CSRF verification
-    $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-    if (!verify_csrf_token($csrf_token)) {
-        flash_message('danger', 'Token keamanan tidak valid. Silakan coba lagi.');
-        redirect('../pages/dashboard_guru.php');
-        return;
-    }
+    require_csrf('dashboard_guru.php');
 
     $guru_id = $_SESSION['user_id'];
     $invite_code = isset($_POST['invite_code']) ? strtoupper(trim($_POST['invite_code'])) : '';
@@ -150,13 +108,7 @@ function handleClaimCode()
         return;
     }
 
-    // Connect to database
-    $pdo = getDBConnection();
-    if (!$pdo) {
-        flash_message('danger', 'Koneksi database gagal. Silakan coba lagi.');
-        redirect('../pages/dashboard_guru.php');
-        return;
-    }
+    $pdo = require_db_or_redirect('dashboard_guru.php');
 
     try {
         // Look up the invite code - must be active and unclaimed

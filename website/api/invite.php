@@ -4,33 +4,9 @@
  * Handles invite code generation for students
  */
 
-session_start();
+require_once __DIR__ . '/form_helpers.php';
 
-require_once __DIR__ . '/../config/app.php';
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../includes/functions.php';
-
-// Only accept POST requests
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    flash_message('danger', 'Method tidak diizinkan.');
-    redirect('../pages/dashboard_student.php');
-    exit;
-}
-
-// Check authentication
-if (!is_logged_in()) {
-    flash_message('warning', 'Silakan login terlebih dahulu.');
-    redirect('../pages/login.php');
-    exit;
-}
-
-// Check role - only students can generate invite codes
-$user = get_user();
-if ($user['role'] !== 'student') {
-    flash_message('danger', 'Hanya siswa yang dapat membuat kode undangan.');
-    redirect('../pages/dashboard_student.php');
-    exit;
-}
+$user = guard_form_api('student', 'dashboard_student.php');
 
 $action = isset($_POST['action']) ? sanitize_input($_POST['action']) : '';
 
@@ -49,23 +25,11 @@ switch ($action) {
  */
 function handleGenerateCode()
 {
-    // CSRF verification
-    $csrf_token = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
-    if (!verify_csrf_token($csrf_token)) {
-        flash_message('danger', 'Token keamanan tidak valid. Silakan coba lagi.');
-        redirect('../pages/dashboard_student.php');
-        return;
-    }
+    require_csrf('dashboard_student.php');
 
     $student_id = $_SESSION['user_id'];
 
-    // Connect to database
-    $pdo = getDBConnection();
-    if (!$pdo) {
-        flash_message('danger', 'Koneksi database gagal. Silakan coba lagi.');
-        redirect('../pages/dashboard_student.php');
-        return;
-    }
+    $pdo = require_db_or_redirect('dashboard_student.php');
 
     try {
         // Check current active codes count (max 2)
