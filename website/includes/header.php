@@ -1,5 +1,11 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.cookie_httponly', 1);
+    ini_set('session.cookie_samesite', 'Lax');
+    ini_set('session.use_strict_mode', 1);
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        ini_set('session.cookie_secure', 1);
+    }
     session_start();
 }
 
@@ -129,7 +135,7 @@ require_once $base_path . 'includes/functions.php';
     ?>
     <div class="toast toast-<?php echo $flash['type']; ?>" id="flashToast">
         <i class="fas fa-<?php echo $flash['type'] === 'success' ? 'check-circle' : ($flash['type'] === 'danger' ? 'exclamation-circle' : 'info-circle'); ?>"></i>
-        <span><?php echo $flash['message']; ?></span>
+        <span><?php echo htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8'); ?></span>
         <button class="toast-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
     </div>
     <?php endif; ?>

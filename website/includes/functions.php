@@ -19,6 +19,9 @@ function sanitize_input($data)
  */
 function redirect($url)
 {
+    if (preg_match('#^https?://#i', $url) || strpos($url, '//') === 0) {
+        $url = 'index.php';
+    }
     header("Location: $url");
     exit();
 }
